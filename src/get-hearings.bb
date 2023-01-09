@@ -3,8 +3,12 @@
 (require '[clojure.math :as math]
          '[clojure.string :as str]
          '[babashka.curl :as curl]
-         '[cheshire.core :as json]
-         '[pod.retrogradeorbit.bootleg.utils :as bootleg]
+         '[babashka.pods :as pods]
+         '[cheshire.core :as json])
+
+(pods/load-pod 'retrogradeorbit/bootleg "0.1.9")
+
+(require '[pod.retrogradeorbit.bootleg.utils :as bootleg]
          '[pod.retrogradeorbit.hickory.select :as s])
 
 (def URL "https://www.judiciary.gov.sg/hearing-list/GetFilteredList")
@@ -36,25 +40,6 @@
            (json/parse-string true)
            :listPartialView)
        "</html>"))
-
-(defn get-pagination-status
-  "Returns the number of additional pages there are"
-  [html]
-  (let [pagination-status (->> (bootleg/convert-to html :hickory)
-                               (s/select
-                                (s/child (s/class "pagination-summary")))
-                               (first)
-                               (get-el-content)
-                               (re-find #"Showing results 1-500 of (\d{3,})."))]
-    (if (nil? pagination-status)
-      0
-      (-> pagination-status (last) (int)
-          (/ 500) (math/ceil) (int)))))
-
-(defn get-hearing-list []
-  (let [first-page-html (get-hearing-list-page-raw 0)
-        additional-pages-count (get-pagination-status first-page-html)
-        additional-pages (map #(get-hearing-list-page-raw (inc %)) (range additional-pages-count))]))
 
 (defn get-hearing-type [html-el]
   (let [selection (s/select
@@ -101,9 +86,32 @@
   (->> (bootleg/convert-to html :hickory)
        (s/select (s/child (s/and (s/class "list-item")
                                  (s/tag :a))))
-       (take 5)
        (map parse-hearing-element)))
 
-;; (spit "test.html" (get-hearing-list-raw))
-(->> (slurp "test.html")
-     (parse-hearing-list-html))
+(defn get-pagination-status
+  "Returns the number of additional pages there are"
+  [html]
+  (let [pagination-status (->> (bootleg/convert-to html :hickory)
+                               (s/select
+                                (s/child (s/class "pagination-summary")))
+                               (first)
+                               (get-el-content)
+                               (re-find #"Showing results 1-500 of (\d{3,})."))]
+    (if (nil? pagination-status)
+      0
+      (-> pagination-status (last) (Integer.)
+          (/ 500) (math/ceil) (int)))))
+
+(defn get-hearing-list []
+  (let [first-page-html (get-hearing-list-page-raw 0)
+        additional-pages-count (get-pagination-status first-page-html)
+        additional-pages (map #(get-hearing-list-page-raw (inc %))
+                              (range additional-pages-count))]
+    (flatten (cons (parse-hearing-list-html first-page-html)
+                   (map parse-hearing-list-html additional-pages)))))
+
+
+
+(->> (get-hearing-list)
+     (json/generate-string)
+     (spit "hearings.json"))

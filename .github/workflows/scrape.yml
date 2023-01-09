@@ -1,0 +1,29 @@
+name: Scrape latest hearing data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '09 01,13 * * *' # 9.09AM and 9.09 PM GMT+8
+
+jobs:
+  scheduled:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out this repo
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Setup Babashka
+      uses: turtlequeue/setup-babashka@v1.5.0
+      with:
+        babashka-version: 1.0.169
+    - name: Fetch latest data
+      run: bb ./src/get-hearings.bb
+    - name: Commit and push if it changed
+      run: |-
+        git config user.name "Automated update"
+        git config user.email "actions@users.noreply.github.com"
+        git add -A
+        timestamp=$(TZ='Asia/Singapore' date)
+        git commit -m "Latest data: ${timestamp}" || exit 0
+        git push
