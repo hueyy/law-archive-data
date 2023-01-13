@@ -5,3 +5,4 @@ bootleg
 *.tgz
 .babashka
 *.html
+*.db
