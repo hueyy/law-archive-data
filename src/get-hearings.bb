@@ -34,8 +34,7 @@
   [page]
   (str "<html>"
        (-> (curl/post URL {:headers {"Content-Type" "application/json; charset=utf-8"}
-                           :body (json/generate-string (make-request-body page))
-                           :debug true})
+                           :body (json/generate-string (make-request-body page))})
            :body
            (json/parse-string true)
            :listPartialView)
