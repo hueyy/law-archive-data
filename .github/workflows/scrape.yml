@@ -18,7 +18,7 @@ jobs:
       with:
         babashka-version: 1.0.169
     - name: Fetch latest data
-      run: bb ./src/get-hearings.bb
+      run: bb ./input/run.bb
     - name: Commit and push if it changed
       run: |-
         git config user.name "Automated update"

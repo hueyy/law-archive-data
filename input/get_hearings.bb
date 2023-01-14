@@ -1,10 +1,15 @@
 #!/usr/bin/env bb
 
-(require '[clojure.math :as math]
-         '[clojure.string :as str]
-         '[babashka.curl :as curl]
-         '[babashka.pods :as pods]
-         '[cheshire.core :as json])
+(ns input.get_hearings
+  (:require [clojure.math :as math]
+            [clojure.string :as str]
+            [babashka.curl :as curl]
+            [babashka.pods :as pods]
+            [cheshire.core :as json])
+  (:import [java.time LocalDateTime]
+           [java.time.format DateTimeFormatter])
+  (:gen-class))
+
 
 (pods/load-pod 'retrogradeorbit/bootleg "0.1.9")
 
@@ -49,6 +54,11 @@
       (->> selection (first) (get-el-content))
       nil)))
 
+(defn format-timestamp [timestamp]
+  (.format DateTimeFormatter/ISO_LOCAL_DATE_TIME
+           (LocalDateTime/parse timestamp
+                                (DateTimeFormatter/ofPattern "dd MMM yyyy', 'h:mm a"))))
+
 (defn parse-hearing-element [html-el]
   (let [hearing-metadata-els
         (s/select (s/child (s/class "hearing-metadata")
@@ -66,7 +76,8 @@
                   nil)
      :timestamp (->> hearing-metadata-els
                      (first)
-                     (get-el-content))
+                     (get-el-content)
+                     (format-timestamp))
      :venue (->> html-el
                  (s/select (s/child (s/class "hearing-item-wrapper")))
                  (first)
@@ -108,9 +119,3 @@
                               (range additional-pages-count))]
     (flatten (cons (parse-hearing-list-html first-page-html)
                    (map parse-hearing-list-html additional-pages)))))
-
-
-
-(->> (get-hearing-list)
-     (json/generate-string)
-     (spit "hearings.json"))
