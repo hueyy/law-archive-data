@@ -1,5 +1,7 @@
 #!/usr/bin/env bb
 
+(ns input.install_deps)
+
 (require '[babashka.process :as process])
 (require '[babashka.fs :as fs])
 
