@@ -1,0 +1,35 @@
+name: Publish db as release
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '19 8 * * *' # 4.19 PM GMT+8
+
+jobs:
+  scheduled:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: '1.2.2'
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
+      - name: Generate db
+        run: poetry run git-history file hearings.db hearings.json --id link
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            hearings.db
+          name: latest
+          tag_name: latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: hueyy/sg-courts-hearings-list
