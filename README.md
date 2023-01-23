@@ -8,12 +8,20 @@ The hearing list data obtained is and remains owned by or licensed to the Singap
 
 ## Viewing the data
 
+You can view the data [using Datasette](https://sg-courts-hearings-list.huey.xyz/hearings).
+
+Some useful views:
+
+- [Number of different types of hearings](https://sg-courts-hearings-list.huey.xyz/hearings?sql=SELECT+COUNT(*)+AS+_count%2C+type+from+item_version_detail+GROUP+BY+type+ORDER+BY+_count+DESC#g.mark=bar&g.x_column=type&g.x_type=ordinal&g.y_column=_count&g.y_type=quantitative&g.color_column=_count)
+
+### Other options
+
 The latest data is stored in the `hearings.json` file. You can view the current version of the file in a user-friendly way using the [GitHub Flat Viewer](https://flatgithub.com/hueyy/sg-courts-hearings-list?filename=hearings.json).
 
 The historical data across the many commits can be analysed using the [`git-history`](https://github.com/simonw/git-history) tool. You can install it using [Poetry](https://python-poetry.org/) with `poetry install`, then open a shell with `poetry shell` and then:
 
 ```bash
-git-history file hearings.db hearings.json --id link
+./build-db.sh
 ```
 
 ## How the data is obtained
