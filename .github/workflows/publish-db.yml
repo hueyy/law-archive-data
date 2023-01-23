@@ -31,7 +31,7 @@ jobs:
           git add -f hearings.db
           timestamp=$(TZ='Asia/Singapore' date)
           git commit -m "Publish db: ${timestamp}" || exit 0
-          git push origin pages
+          git push origin pages --force
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
