@@ -21,9 +21,15 @@ The latest data is stored in the `hearings.json` file. You can view the current 
 The historical data across the many commits can be analysed using the [`git-history`](https://github.com/simonw/git-history) tool. You can install it using [Poetry](https://python-poetry.org/) with `poetry install`, then open a shell with `poetry shell` and then:
 
 ```bash
-./build-db.sh
+bb ./scripts/build-db.bb
 ```
 
 ## How the data is obtained
 
 A GitHub workflow runs at 9.09AM and 9.09PM (GMT +8) which obtains the data and commits it to the `hearings.json` file in this repository.
+
+## Deployment
+
+```bash
+bb ./scripts/publish-dockerfile.bb
+```

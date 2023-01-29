@@ -30,7 +30,7 @@ jobs:
           git checkout pages
           git add -f hearings.db
           timestamp=$(TZ='Asia/Singapore' date)
-          git commit -m "Publish db: ${timestamp}" || exit 0
+          git commit -m "Publish db: ${timestamp}"
           git push origin pages --force
       - name: Release
         uses: softprops/action-gh-release@v1
