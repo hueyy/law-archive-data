@@ -9,7 +9,7 @@ packages = [{include = "sg_courts_hearings_list"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-git-history = "^0.6.1"
+git-history = "0.7a0"
 
 
 [build-system]

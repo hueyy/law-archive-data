@@ -30,11 +30,11 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7
 
 [[package]]
 name = "git-history"
-version = "0.6.1"
+version = "0.7a0"
 description = "Tools for analyzing Git history using SQLite"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 click = "*"
@@ -139,7 +139,7 @@ widechars = ["wcwidth"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "3e7416fb9eb48c2faf83449ec5c40ad716fc26d7e3ee921e36ac1e3f2fff8708"
+content-hash = "09006f8ffff483be197bfbddfcc84d736b12e7ef5f1b9266241835da1a25ec2d"
 
 [metadata.files]
 click = [
@@ -155,8 +155,8 @@ colorama = [
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
 ]
 git-history = [
-    {file = "git-history-0.6.1.tar.gz", hash = "sha256:e423a96916ef8b7d5504efc9e378e54aa86ccbb0136dc7846ac9c04593f0caca"},
-    {file = "git_history-0.6.1-py3-none-any.whl", hash = "sha256:050061b3ac06a7889aa6eb072443d4930cb784d77161e87dfa9526f60d8493e7"},
+    {file = "git-history-0.7a0.tar.gz", hash = "sha256:cb69a7bd669026ae8a5525e2b12ab730a8383af588d3d7d7ebfed2691577678e"},
+    {file = "git_history-0.7a0-py3-none-any.whl", hash = "sha256:792a71d8507e5450cb9af7265ba51dd30212d24ed87dced786ad822c612ab0d5"},
 ]
 gitdb = [
     {file = "gitdb-4.0.10-py3-none-any.whl", hash = "sha256:c286cf298426064079ed96a9e4a9d39e7f3e9bf15ba60701e95f5492f28415c7"},
