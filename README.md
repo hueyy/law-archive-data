@@ -28,8 +28,18 @@ bb ./scripts/build-db.bb
 
 A GitHub workflow runs at 9.09AM and 9.09PM (GMT +8) which obtains the data and commits it to the `hearings.json` file in this repository.
 
-## Deployment
+## Development
+
+### Deployment
 
 ```bash
 bb ./scripts/publish-dockerfile.bb
+```
+
+### Frontend development
+
+```
+cd frontend/
+pnpm i
+pnpm run dev
 ```
