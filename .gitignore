@@ -6,3 +6,7 @@ bootleg
 .babashka
 *.html
 *.db
+/mergestat
+/libmergestat.so
+.venv
+.vscode

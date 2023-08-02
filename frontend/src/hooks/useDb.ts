@@ -1,5 +1,5 @@
 import { createDbWorker } from "sql.js-httpvfs"
-import { useEffect, useRef, useState } from "preact/hooks"
+import { useEffect, useRef } from "preact/hooks"
 import Db from '../utils/Db'
 
 
