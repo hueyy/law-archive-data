@@ -20,4 +20,4 @@ interface Hearing {
   coram?: string
 }
 
-type ViewMode = 'simple' | 'advanced'
+type ViewMode = 'Simple' | 'Advanced'

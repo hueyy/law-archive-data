@@ -5,12 +5,14 @@ interface Props {
   options: string[]
   value: string
   onChange: (value: string) => void
+  className?: string
 }
 
 const Toggle: FunctionComponent<Props> = ({
   options,
-  value = options[0],
-  onChange = (value) => { }
+  value,
+  onChange,
+  className = ''
 }) => {
   const onChangeSelection = useCallback((option: string) => () => {
     onChange(option)
@@ -20,11 +22,11 @@ const Toggle: FunctionComponent<Props> = ({
   const activeClass = 'bg-slate-600 text-white'
 
   return (
-    <div className="inline-flex flex-row justify-start border border-solid border-gray-400 w-fit rounded">
+    <div className={`inline-flex flex-row justify-start border border-solid border-gray-400 w-fit rounded ${className}`}>
 
       {options.map(option => (
         <div
-          className={`${divClass} ${value === option ? '' : activeClass}`}
+          className={`${divClass} ${value === option ? activeClass : ''}`}
           onClick={onChangeSelection(option)}
           key={option}
         >

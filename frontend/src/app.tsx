@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import DateTimePicker from './components/DateTimePicker'
 import useDb from './hooks/useDb'
+import { fetchAvailableDates, fetchHearingsByCommitId } from './utils/Db'
 import { getYesterdayDate, toDateString } from './utils/Utils'
 import HearingTable from './components/HearingTable'
 import Toggle from './components/Toggle'
+import HearingCard from './components/HearingCard'
 
 type DateHash = Record<string, string>
 
@@ -13,8 +15,10 @@ export const App = () => {
   const [minDate, setMinDate] = useState<string>('')
   const [maxDate, setMaxDate] = useState<string>('')
   const [dateMap, setDateMap] = useState<DateHash>({})
+
   const [hearingData, setHearingData] = useState<Hearing[]>([])
-  const [viewMode, setViewMode] = useState<ViewMode>('simple')
+  const [isFetchingHearings, setIsFetchingHearings] = useState(true)
+  const [viewMode, setViewMode] = useState<ViewMode>('Simple')
 
   const dbRef = useRef<any>(null)
 
@@ -29,29 +33,17 @@ export const App = () => {
     }
     const fetchHearings = async (currentDate: string) => {
       try {
+        setIsFetchingHearings(true)
         const commitId = dateMap[currentDate]
-        const result = await dbRef.current.exec(
-          'SELECT * FROM item WHERE _commit = ?',
-          [commitId]
+        const hearings = await fetchHearingsByCommitId(
+          dbRef.current,
+          commitId
         )
-        const hearings = (result[0].values.map((v: string[]): Hearing => ({
-          chargeNumber: v[0],
-          natureOfCase: v[1],
-          parties: JSON.parse(v[2]),
-          type: v[3],
-          title: v[4],
-          hearingOutcome: v[5],
-          reference: v[6],
-          link: v[7],
-          venue: v[8],
-          hearingType: v[9],
-          timestamp: new Date(v[10]),
-          offenceDescription: v[11],
-          coram: v[12]
-        })))
         setHearingData(hearings)
       } catch (error) {
         console.error(error)
+      } finally {
+        setIsFetchingHearings(false)
       }
     }
     void fetchHearings(d)
@@ -62,36 +54,27 @@ export const App = () => {
   }, [])
 
   const onDbLoaded = useCallback((db: any) => {
-    const fetchAvailableDates = async () => {
+    const fetch = async () => {
       try {
-        const result = await db.exec(
-          `SELECT id, commit_at
-            FROM commits
-            ORDER BY commit_at ASC`)
-        const data = result[0].values.map(([_, timestamp]: [_: never, timestamp: string]) => [_, toDateString((new Date(timestamp)))])
-        setDateMap(
-          [
-            ...new Set(data.map(([_, timestamp]: [_: never, timestamp: string]) => timestamp))
-          ].map(timestamp => data.find(([_, t]: [_: never, t: string]) => timestamp === t))
-            .reduce((prev, [id, date]: [hash: string, date: string]) => ({
-              ...prev,
-              [date]: id
-            }), {})
-        )
-        const oldestDate: string = toDateString(new Date(data[0][1]))
-        const newestDate: string = toDateString(new Date(data.slice(-1)[0][1]))
+        const {
+          dateMap,
+          oldestDate,
+          newestDate
+        } = await fetchAvailableDates(db)
+        setDateMap(dateMap)
         setMinDate(oldestDate)
         setMaxDate(newestDate)
+        setDate(newestDate)
         dbRef.current = db
       } catch (error) {
         console.error(error)
       }
     }
-    void fetchAvailableDates()
+    void fetch()
   }, [])
 
   useDb(onDbLoaded)
-  const isLoading = minDate.length === 0
+  const isLoading = minDate.length === 0 || isFetchingHearings
 
   useEffect(() => {
     getHearings(date)
@@ -99,8 +82,8 @@ export const App = () => {
 
   return (
     <div className="container max-w-screen-lg p-6 mx-auto">
-      <h1 className="mb-6">
-        Supreme Court Hearing List
+      <h1 className="mb-6 text-center text-xl font-bold">
+        SG Courts Hearing List
       </h1>
       {
         isLoading
@@ -114,6 +97,7 @@ export const App = () => {
                 max={maxDate}
               />
               <Toggle
+                className="ml-4"
                 options={['Simple', 'Advanced']}
                 value={viewMode}
                 onChange={onChangeViewMode}
@@ -121,13 +105,11 @@ export const App = () => {
             </div>
 
             <div>
-              {viewMode === 'simple'
-                ? (<>
-                  Simple
-                </>)
-                : (
-                  <HearingTable hearingData={hearingData} />
-                )}
+              {viewMode === 'Simple'
+                ? (<div className="mt-8 flex flex-col gap-4">
+                  {hearingData.map(hearing => <HearingCard key={hearing.link} hearing={hearing} />)}
+                </div>)
+                : (<HearingTable className="mt-8" hearingData={hearingData} />)}
             </div>
           </>)
       }

@@ -1,17 +1,16 @@
-import { createDbWorker } from "sql.js-httpvfs"
-import { useEffect, useRef } from "preact/hooks"
+import { createDbWorker } from 'sql.js-httpvfs'
+import { useEffect, useRef } from 'preact/hooks'
 import Db from '../utils/Db'
-
 
 const useDb = (done: (db: any) => void) => {
   const workerDb = useRef<any>(null)
 
   useEffect(() => {
-    if(workerDb.current !== null){
+    if (workerDb.current !== null) {
       done(workerDb.current)
       return
     }
-    (async () => {
+    const getDb = async () => {
       try {
         const worker = await createDbWorker(
           [Db.config],
@@ -21,11 +20,12 @@ const useDb = (done: (db: any) => void) => {
 
         workerDb.current = worker.db
         done(workerDb.current)
-      } catch (error){
+      } catch (error) {
         console.error(error)
-      }   
-    })()
-  }, [workerDb])
+      }
+    }
+    void getDb()
+  }, [done, workerDb])
 }
 
 export default useDb
