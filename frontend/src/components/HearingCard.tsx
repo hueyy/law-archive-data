@@ -13,7 +13,7 @@ const HearingCard: FunctionComponent<Props> = ({
     <div className={`p-4 border border-gray-300 ${className}`}>
       <div className="flex flex-row justify-between text-sm text-gray-500">
         <div>
-          {hearing.timestamp.toTimeString().slice(0, 5)}
+          {hearing.timestamp.toLocaleString('en-SG', { timeZone: 'Asia/Singapore' })}
           {hearing.reference !== null
             ? <>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;{hearing.reference}</>
             : null}

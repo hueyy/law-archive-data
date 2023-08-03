@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import DateTimePicker from './components/DateTimePicker'
 import useDb from './hooks/useDb'
-import { fetchAvailableDates, fetchHearingsByCommitId } from './utils/Db'
-import { getYesterdayDate, toDateString } from './utils/Utils'
+import { fetchAllHearings, fetchAvailableDates, fetchHearingsByCommitId } from './utils/Db'
 import HearingTable from './components/HearingTable'
 import Toggle from './components/Toggle'
 import HearingCard from './components/HearingCard'
@@ -13,8 +12,7 @@ type DateHash = Record<string, string>
 const PAGE_SIZE = 10
 
 export const App = () => {
-  const today = toDateString(getYesterdayDate())
-  const [date, setDate] = useState(today)
+  const [date, setDate] = useState<string>('')
   const [minDate, setMinDate] = useState<string>('')
   const [maxDate, setMaxDate] = useState<string>('')
   const [dateMap, setDateMap] = useState<DateHash>({})
@@ -39,15 +37,21 @@ export const App = () => {
     const fetchHearings = async (currentDate: string) => {
       try {
         setIsFetchingHearings(true)
-        const commitId = dateMap[currentDate]
-        const { hearings, totalCount } = await fetchHearingsByCommitId(
-          dbRef.current,
-          commitId,
-          currentPage,
-          PAGE_SIZE
-        )
-        setTotalPages(Math.ceil(totalCount / PAGE_SIZE))
-        setHearingData(hearings)
+        if (currentDate.length > 0) {
+          const commitId = dateMap[currentDate]
+          const { hearings, totalCount } = await fetchHearingsByCommitId(
+            dbRef.current,
+            commitId,
+            currentPage,
+            PAGE_SIZE
+          )
+          setTotalPages(Math.ceil(totalCount / PAGE_SIZE))
+          setHearingData(hearings)
+        } else {
+          const { hearings, totalCount } = await fetchAllHearings(dbRef.current, currentPage, PAGE_SIZE)
+          setTotalPages(Math.ceil(totalCount / PAGE_SIZE))
+          setHearingData(hearings)
+        }
       } catch (error) {
         console.error(error)
       } finally {
@@ -76,7 +80,6 @@ export const App = () => {
         setDateMap(dateMap)
         setMinDate(oldestDate)
         setMaxDate(newestDate)
-        setDate(newestDate)
         dbRef.current = db
       } catch (error) {
         console.error(error)
