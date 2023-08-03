@@ -11,11 +11,14 @@ const HearingCard: FunctionComponent<Props> = ({
 }) => {
   return (
     <div className={`p-4 border border-gray-300 ${className}`}>
-      <div className="flex flex-row justify-between text-sm">
-        <div className="">
-          {hearing.timestamp.toTimeString().slice(0, 5)} / {hearing.reference}
+      <div className="flex flex-row justify-between text-sm text-gray-500">
+        <div>
+          {hearing.timestamp.toTimeString().slice(0, 5)}
+          {hearing.reference !== null
+            ? <>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;{hearing.reference}</>
+            : null}
         </div>
-        <div className="">
+        <div>
           {hearing.type}
         </div>
       </div>

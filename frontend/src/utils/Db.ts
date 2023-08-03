@@ -54,12 +54,13 @@ export const fetchAvailableDates = async (db: any): Promise<{
 export const fetchHearingsByCommitId = async (
   db: any,
   commitId: string,
+  pageNumber: number = 0,
   pageSize: number = 50
 ) => {
   try {
     const result = await db.exec(
-      'SELECT * FROM item WHERE _commit = ? LIMIT ?',
-      [commitId, pageSize]
+      'SELECT *, (SELECT COUNT(*) FROM item WHERE _commit IS ?) AS _count FROM item WHERE _commit = ? ORDER BY timestamp ASC LIMIT ?, ?',
+      [commitId, commitId, pageNumber * pageSize, pageSize]
     )
     const hearings = (result[0].values.map((v: string[]): Hearing => ({
       chargeNumber: v[0],
@@ -76,7 +77,10 @@ export const fetchHearingsByCommitId = async (
       offenceDescription: v[11],
       coram: v[12]
     })))
-    return hearings
+    return {
+      hearings,
+      totalCount: result[0].values[0][13]
+    }
   } catch (error) {
     console.error(error)
     throw error

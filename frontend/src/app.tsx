@@ -6,8 +6,11 @@ import { getYesterdayDate, toDateString } from './utils/Utils'
 import HearingTable from './components/HearingTable'
 import Toggle from './components/Toggle'
 import HearingCard from './components/HearingCard'
+import PageNumbers from './components/PageNumbers'
 
 type DateHash = Record<string, string>
+
+const PAGE_SIZE = 10
 
 export const App = () => {
   const today = toDateString(getYesterdayDate())
@@ -17,6 +20,8 @@ export const App = () => {
   const [dateMap, setDateMap] = useState<DateHash>({})
 
   const [hearingData, setHearingData] = useState<Hearing[]>([])
+  const [currentPage, setCurrentPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
   const [isFetchingHearings, setIsFetchingHearings] = useState(true)
   const [viewMode, setViewMode] = useState<ViewMode>('Simple')
 
@@ -35,10 +40,13 @@ export const App = () => {
       try {
         setIsFetchingHearings(true)
         const commitId = dateMap[currentDate]
-        const hearings = await fetchHearingsByCommitId(
+        const { hearings, totalCount } = await fetchHearingsByCommitId(
           dbRef.current,
-          commitId
+          commitId,
+          currentPage,
+          PAGE_SIZE
         )
+        setTotalPages(Math.ceil(totalCount / PAGE_SIZE))
         setHearingData(hearings)
       } catch (error) {
         console.error(error)
@@ -47,10 +55,14 @@ export const App = () => {
       }
     }
     void fetchHearings(d)
-  }, [dateMap])
+  }, [dateMap, currentPage])
 
   const onSetDate = useCallback((d: string) => {
     setDate(d)
+  }, [])
+
+  const onSetPage = useCallback((p: number) => {
+    setCurrentPage(p)
   }, [])
 
   const onDbLoaded = useCallback((db: any) => {
@@ -106,9 +118,23 @@ export const App = () => {
 
             <div>
               {viewMode === 'Simple'
-                ? (<div className="mt-8 flex flex-col gap-4">
-                  {hearingData.map(hearing => <HearingCard key={hearing.link} hearing={hearing} />)}
-                </div>)
+                ? (
+                  <>
+                    <PageNumbers
+                      className="mt-8"
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onSetPage={onSetPage}
+                    />
+                    <div className="my-2 flex flex-col gap-4">
+                      {hearingData.map(hearing => <HearingCard key={hearing.link} hearing={hearing} />)}
+                    </div>
+                    <PageNumbers
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onSetPage={onSetPage}
+                    />
+                  </>)
                 : (<HearingTable className="mt-8" hearingData={hearingData} />)}
             </div>
           </>)
