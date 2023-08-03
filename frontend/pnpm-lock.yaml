@@ -11,6 +11,9 @@ dependencies:
   preact:
     specifier: ^10.16.0
     version: 10.16.0
+  preact-router:
+    specifier: ^4.1.2
+    version: 4.1.2(preact@10.16.0)
   sql.js-httpvfs:
     specifier: ^0.8.12
     version: 0.8.12
@@ -7893,6 +7896,14 @@ packages:
       picocolors: 1.0.0
       source-map-js: 1.0.2
     dev: true
+
+  /preact-router@4.1.2(preact@10.16.0):
+    resolution: {integrity: sha512-uICUaUFYh+XQ+6vZtQn1q+X6rSqwq+zorWOCLWPF5FAsQh3EJ+RsDQ9Ee+fjk545YWQHfUxhrBAaemfxEnMOUg==}
+    peerDependencies:
+      preact: '>=10'
+    dependencies:
+      preact: 10.16.0
+    dev: false
 
   /preact@10.16.0:
     resolution: {integrity: sha512-XTSj3dJ4roKIC93pald6rWuB2qQJO9gO2iLLyTe87MrjQN+HklueLsmskbywEWqCHlclgz3/M4YLL2iBr9UmMA==}

@@ -10,6 +10,7 @@
   "dependencies": {
     "@tanstack/react-table": "^8.9.3",
     "preact": "^10.16.0",
+    "preact-router": "^4.1.2",
     "sql.js-httpvfs": "^0.8.12"
   },
   "devDependencies": {
