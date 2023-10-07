@@ -1,11 +1,13 @@
 #!/usr/bin/env bb
 
 (ns scripts.build-db
-  (:require [babashka.process :refer [shell sh process]]
+  (:require [babashka.process :refer [shell sh]]
             [babashka.fs :as fs]
             [cheshire.core :as json]
             [clojure.string :as str]
-            [taoensso.timbre :as timbre]))
+            [taoensso.timbre :as timbre]
+            [scripts.utils :as utils]
+            [scripts.computed-columns :refer [add-computed-columns]]))
 
 (def MERGESTAT_BINARY "mergestat")
 (def DB_FILE "data/data.db")
@@ -44,11 +46,6 @@
            (catch Exception e
              (timbre/error e)))))))
 
-(defn- run-sql-on-db [f]
-  (let [stream (-> (process ["cat" f]) :out)]
-    @(process ["sqlite3" DB_FILE] {:in stream
-                                   :out :inherit})))
-
 (def HEARINGS_JSON "data/hearings.json")
 (def SC_JSON "data/sc.json")
 (def PDPC_UNDERTAKINGS_JSON "data/pdpc-undertakings.json")
@@ -59,6 +56,7 @@
   (generate-db "sc" SC_JSON "name")
   (generate-db "pdpc_undertakings" PDPC_UNDERTAKINGS_JSON "url")
   (generate-db "pdpc_decisions" PDPC_DECISIONS_JSON "url")
-  (run-sql-on-db "scripts/create-views.sql"))
+  (utils/run-sql-file-on-db DB_FILE "scripts/create-views.sql")
+  (add-computed-columns DB_FILE))
 
 (run)

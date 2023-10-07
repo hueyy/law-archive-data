@@ -353,7 +353,7 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "ea1cbca231c376a92563c7e9d94f6fc592dc68cfe204a81a112ed3fbf2a4d65b"
+content-hash = "e27b7203e746763a37d6df626771b9457f46b4e262cdd4dcca09dba57e240aa8"
 
 [metadata.files]
 argcomplete = [

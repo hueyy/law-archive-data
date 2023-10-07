@@ -10,6 +10,7 @@ readme = "README.md"
 python = "^3.10"
 git-history = "0.7a0"
 b2 = "^3.10.1"
+sqlite-utils = "^3.35.1"
 
 
 [build-system]

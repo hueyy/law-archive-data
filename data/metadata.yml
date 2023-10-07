@@ -298,12 +298,14 @@ plugins:
           query: >-
             SELECT
               obligation,
-              COUNT(*) AS count
+              COUNT(*) AS count,
+              timestamp
             FROM
               (
                 SELECT
                   "Protection" as obligation,
-                  title
+                  title,
+                  timestamp
                 FROM
                   pdpc_decisions
                 WHERE
@@ -311,7 +313,8 @@ plugins:
                 UNION
                 SELECT
                   "Accountability" as obligation,
-                  title
+                  title,
+                  timestamp
                 FROM
                   pdpc_decisions
                 WHERE
@@ -320,7 +323,8 @@ plugins:
                 UNION
                 SELECT
                   "Consent" as obligation,
-                  title
+                  title,
+                  timestamp
                 FROM
                   pdpc_decisions
                 WHERE
@@ -328,7 +332,8 @@ plugins:
                 UNION
                 SELECT
                   "Notification" as obligation,
-                  title
+                  title,
+                  timestamp
                 FROM
                   pdpc_decisions
                 WHERE
@@ -336,7 +341,8 @@ plugins:
                 UNION
                 SELECT
                   "Purpose Limitation" as obligation,
-                  title
+                  title,
+                  timestamp
                 FROM
                   pdpc_decisions
                 WHERE
@@ -344,7 +350,8 @@ plugins:
                 UNION
                 SELECT
                   "Acccuracy" as obligation,
-                  title
+                  title,
+                  timestamp
                 FROM
                   pdpc_decisions
                 WHERE
@@ -352,15 +359,26 @@ plugins:
                 UNION
                 SELECT
                   "Access and Correction" as obligation,
-                  title
+                  title,
+                  timestamp
                 FROM
                   pdpc_decisions
                 WHERE
-                  title LIKE "%Access and Correction%"
+                  title LIKE "%Access and Correction%" OR
+                  title LIKE "%Access Obligation%" OR
+                  EXISTS (
+                    SELECT
+                      1
+                    FROM
+                      json_each(tags)
+                    WHERE
+                      value = 'Access and Correction'
+                  )
                 UNION
                 SELECT
                   "Data Breach Notification" as obligation,
-                  title
+                  title,
+                  timestamp
                 FROM
                   pdpc_decisions
                 WHERE
@@ -368,7 +386,8 @@ plugins:
                 UNION
                 SELECT
                   "Retention Limitation" as obligation,
-                  title
+                  title,
+                  timestamp
                 FROM
                   pdpc_decisions
                 WHERE
@@ -376,7 +395,8 @@ plugins:
                 UNION
                 SELECT
                   "Transfer Limitation" as obligation,
-                  title
+                  title,
+                  timestamp
                 FROM
                   pdpc_decisions
                 WHERE
@@ -384,15 +404,196 @@ plugins:
               )
             WHERE
               title NOT LIKE "No Breach of%"
+              [[ AND timestamp >= date(:date_start) ]]
+              [[ AND timestamp <= date(:date_end) ]]
+            COLLATE NOCASE
             GROUP BY
               obligation
             ORDER BY
               obligation ASC
           # Other options considered and rejected
           # - SELECT CASE because there can be a breach of multiple obligations
+          # Note that relying on tags to determine obligations breached
+          # is not reliable
+          # See e.g. https://www.pdpc.gov.sg/all-commissions-decisions/2020/11/breach-of-the-consent-and-accountability-obligations-by-majestic-debt-recovery
           library: vega-lite
           display:
             mark: { type: arc, tooltip: true }
             encoding:
               theta: { field: count, type: quantitative }
               color: { field: obligation, type: nominal }
+        enforcement-action-types:
+          title: Types of enforcement action taken
+          db: data
+          query: >-
+            SELECT
+              action,
+              COUNT(*) AS count,
+              action || " (" || COUNT(*) || ")" AS label
+            FROM
+              (
+                SELECT
+                  "Financial Penalty" as action,
+                  timestamp
+                FROM
+                  pdpc_decisions
+                WHERE
+                  EXISTS (
+                    SELECT
+                      1
+                    FROM
+                      json_each(tags)
+                    WHERE
+                      value = 'Financial Penalty'
+                  )
+                UNION
+                SELECT
+                  "Directions" as action,
+                  timestamp
+                FROM
+                  pdpc_decisions
+                WHERE
+                  EXISTS (
+                    SELECT
+                      1
+                    FROM
+                      json_each(tags)
+                    WHERE
+                      value = 'Directions'
+                  )
+                UNION
+                SELECT
+                  "Warning" as action,
+                  timestamp
+                FROM
+                  pdpc_decisions
+                WHERE
+                  EXISTS (
+                    SELECT
+                      1
+                    FROM
+                      json_each(tags)
+                    WHERE
+                      value = 'Warning' OR
+                      value = 'Advisory Notice'
+                  )
+                UNION
+                SELECT
+                  "No action" as action,
+                  timestamp
+                FROM
+                  pdpc_decisions
+                WHERE
+                  EXISTS (
+                    SELECT
+                      1
+                    FROM
+                      json_each(tags)
+                    WHERE
+                      value = 'No Further Action' OR
+                      value = 'Not in Breach' OR
+                      value = 'No breach'
+                  )
+                UNION
+                SELECT
+                  "Undertaking" as action,
+                  timestamp
+                FROM
+                  pdpc_undertakings
+                WHERE TRUE
+              )
+            WHERE TRUE
+              [[ AND timestamp >= date(:date_start) ]]
+              [[ AND timestamp <= date(:date_end) ]]
+            COLLATE NOCASE
+            GROUP BY action
+            ORDER BY action ASC
+          library: vega-lite
+          display:
+            layer:
+              - mark:
+                  type: arc
+                  tooltip: true
+                  innerRadius: 10
+                  outerRadius: 40
+              - mark: { type: text, radiusOffset: 50 }
+                encoding:
+                  text: { field: action, type: nominal }
+              - mark: { type: text, radiusOffset: 50, dy: 20 }
+                encoding:
+                  text: { field: count, type: quantitative }
+            encoding:
+              theta:
+                field: count
+                type: quantitative
+                stack: true
+              radius:
+                field: count
+                scale:
+                  type: sqrt
+                  zero: true
+                  rangeMin: 10
+              color: { field: action, type: nominal }
+        most-recent-enforcement:
+          title: Latest enforcement action
+          db: data
+          query: >-
+            SELECT
+              title,
+              timestamp
+            FROM (
+              SELECT
+                title,
+                timestamp
+              FROM pdpc_decisions
+              UNION
+              SELECT
+                "Undertaking by " || organisation AS title,
+                timestamp
+              FROM pdpc_undertakings
+            ) ORDER BY timestamp DESC
+            LIMIT 10
+          library: table
+        highest-financial-penalties:
+          title: Highest financial penalties
+          db: data
+          query: >-
+            SELECT
+              title,
+              json_extract(financial_penalties, '$.max') AS quantum,
+              timestamp
+            FROM
+              pdpc_decisions
+            ORDER BY quantum DESC
+            LIMIT 10
+          library: table
+        financial-penalties:
+          title: Financial penalties over time
+          db: data
+          query: >-
+            SELECT
+              json_extract(financial_penalties, '$.max') AS quantum,
+              timestamp
+            FROM
+              pdpc_decisions
+            WHERE
+              quantum > 0
+              [[ AND timestamp >= date(:date_start) ]]
+              [[ AND timestamp <= date(:date_end) ]]
+            ORDER BY 
+              timestamp ASC
+          library: vega-lite
+          display:
+            layer:
+              - mark: { type: line, point: true, tooltip: true }
+                encoding: 
+                  x:
+                    field: timestamp
+                    type: temporal
+                    timeUnit: yearmonthdate
+                  y:
+                    field: quantum
+                    type: quantitative
+              # - mark: { type: text }
+              #   encoding:
+              #     text: { field: quantum, type: quantitative }

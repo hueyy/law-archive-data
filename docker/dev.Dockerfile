@@ -3,7 +3,8 @@ FROM datasetteproject/datasette
 RUN datasette install \
   datasette-vega \
   datasette-pretty-json \
-  datasette-dashboards
+  datasette-dashboards \
+  datasette-sqlite-regex
 
 WORKDIR /app
 
