@@ -4,8 +4,8 @@ This repository contains Singapore legal data obtained various public sources an
 
 - Court hearings: [`/data/hearings.json`](./data/hearings.json)
 - Senior Counsels: [`/data/sc.json`](./data/sc.json)
-- PDPC undertakings: `/data/pdpc-undertakings.json`(./data/pdpc-undertakings.json)
-- PDPC decisions: `/data/pdpc-decisions.json`(./data/pdpc-decisions.json)
+- PDPC undertakings: [`/data/pdpc-undertakings.json`](./data/pdpc-undertakings.json)
+- PDPC decisions: [`/data/pdpc-decisions.json`](./data/pdpc-decisions.json)
 
 You can view and query the data using [this Datasette instance](https://law-archive-data.fly.dev/data).
 
@@ -15,7 +15,7 @@ The data remains owned by its respective owners. This repository is not affiliat
 
 ## Development
 
-In this project, everything is just a script (or a microservice™). Although most of the scripts are [Babashka](https://github.com/babashka/babashka) scripts written in [Clojure](https://clojure.org/), new scripts can be in any laguage. 
+In this project, everything is just a script (aka a microservice™). Although most of the scripts are [Babashka](https://github.com/babashka/babashka) scripts written in [Clojure](https://clojure.org/), new scripts can be in any laguage. 
 
 The data is obtained periodically via scheduled GitHub action workflows and committed to this repository. Each Github Action runs one of the input scripts in the [`/input` folder](./input/). Each input script stores the data obtained in a JSON file in the [`/data` folder](./data/). Each JSON file is just a snapshot in time, i.e. it contains only the data obtained in the last run of the respective script as opposed to all data ever obtained using that script. 
 
