@@ -62,20 +62,6 @@ databases:
       sc_version:
         hidden: true
     queries:
-      sc_by_title:
-        sql: |-
-          SELECT title, COUNT(*) AS count
-          FROM sc
-          GROUP BY title
-          ORDER BY count DESC
-        title: Group SC by title
-      sc_by_organisation:
-        sql: |-
-          SELECT organisation, COUNT(*) AS count
-          FROM sc
-          GROUP BY organisation
-          ORDER BY count DESC
-        title: Group SC by organisation
 plugins:
   datasette-dashboards:
     senior_counsel:
@@ -190,6 +176,11 @@ plugins:
         date_end:
           name: Date End
           type: date
+      layout:
+       - [financial-penalties, enforcement-action-types]
+       - [financial-penalties, obligation-types]
+       - [enforcement-count, most-recent-enforcement]
+       - [total-financial-penalties, highest-financial-penalties]
       charts:
         enforcement-count:
           title: Enforcement action over time
@@ -223,70 +214,9 @@ plugins:
               timestamp
             ORDER BY 
               timestamp ASC
-          # SELECT
-          #   t,
-          #   SUM(u_count) OVER (
-          #     ORDER BY
-          #       t ASC
-          #   ) AS u_sum,
-          #   SUM(d_count) OVER (
-          #     ORDER BY
-          #       t ASC
-          #   ) AS d_sum
-          # FROM
-          #   (
-          #     SELECT
-          #       COALESCE(u.timestamp, d.timestamp) AS t,
-          #       IFNULL(u.count, 0) AS u_count,
-          #       d.count AS d_count
-          #     FROM
-          #       (
-          #         SELECT
-          #           timestamp,
-          #           COUNT(*) AS count
-          #         FROM
-          #           pdpc_undertakings
-          #         GROUP BY
-          #           timestamp
-          #       ) AS u
-          #       LEFT JOIN (
-          #         SELECT
-          #           timestamp,
-          #           COUNT(*) AS count
-          #         FROM
-          #           pdpc_decisions
-          #         GROUP BY
-          #           timestamp
-          #       ) AS d ON u.timestamp = d.timestamp
-          #     UNION
-          #     SELECT
-          #       COALESCE(u.timestamp, d.timestamp) AS t,
-          #       IFNULL(u.count, 0) AS u_count,
-          #       d.count AS d_count
-          #     FROM
-          #       (
-          #         SELECT
-          #           timestamp,
-          #           COUNT(*) AS count
-          #         FROM
-          #           pdpc_decisions
-          #         GROUP BY
-          #           timestamp
-          #       ) AS d
-          #       LEFT JOIN (
-          #         SELECT
-          #           timestamp,
-          #           COUNT(*) AS count
-          #         FROM
-          #           pdpc_undertakings
-          #         GROUP BY
-          #           timestamp
-          #       ) AS u ON u.timestamp = d.timestamp
-          #     GROUP BY
-          #       t
-          #   )
           library: vega-lite
           display:
+            height: container
             mark: { type: line, point: true, tooltip: true }
             encoding:
               x: { field: timestamp, type: temporal, timeUnit: yearmonthdate }
@@ -438,14 +368,7 @@ plugins:
                 FROM
                   pdpc_decisions
                 WHERE
-                  EXISTS (
-                    SELECT
-                      1
-                    FROM
-                      json_each(tags)
-                    WHERE
-                      value = 'Financial Penalty'
-                  )
+                  json_extract(financial_penalties, '$.max') > 0
                 UNION
                 SELECT
                   "Directions" as action,
@@ -541,59 +464,182 @@ plugins:
             SELECT
               title,
               timestamp
-            FROM (
-              SELECT
-                title,
-                timestamp
-              FROM pdpc_decisions
-              UNION
-              SELECT
-                "Undertaking by " || organisation AS title,
-                timestamp
-              FROM pdpc_undertakings
-            ) ORDER BY timestamp DESC
-            LIMIT 10
+            FROM
+              (
+                SELECT
+                  '<a href="' || url || '">' || title || '</a>' AS title,
+                  timestamp
+                FROM
+                  pdpc_decisions
+                UNION
+                SELECT
+                  '<a href="' || url || '">' || "Undertaking by " || organisation || '</a>' AS title,
+                  timestamp
+                FROM
+                  pdpc_undertakings
+              )
+            WHERE TRUE
+              [[ AND timestamp >= date(:date_start) ]]
+              [[ AND timestamp <= date(:date_end) ]]
+            ORDER BY
+              timestamp DESC
+            LIMIT
+              10
           library: table
         highest-financial-penalties:
           title: Highest financial penalties
           db: data
           query: >-
             SELECT
-              title,
+              '<a href="' || url || '">' || title || '</a>' AS title,
               json_extract(financial_penalties, '$.max') AS quantum,
               timestamp
             FROM
               pdpc_decisions
+            WHERE TRUE
+              [[ AND timestamp >= date(:date_start) ]]
+              [[ AND timestamp <= date(:date_end) ]]
             ORDER BY quantum DESC
             LIMIT 10
           library: table
+        total-financial-penalties:
+          title: Total financial penalties imposed over time
+          db: data
+          query: >- 
+            SELECT
+              SUM(amount) OVER (
+                ORDER BY
+                  timestamp ROWS BETWEEN UNBOUNDED PRECEDING
+                  AND CURRENT ROW
+              ) AS total,
+              timestamp
+            FROM
+              (
+                SELECT
+                  SUM(json_extract(financial_penalties, '$.sum')) AS amount,
+                  timestamp
+                FROM
+                  pdpc_decisions
+                WHERE json_extract(financial_penalties, '$.sum') > 0
+                GROUP BY
+                  timestamp
+                ORDER BY
+                  timestamp
+              )
+            WHERE TRUE
+              [[ AND timestamp >= date(:date_start) ]]
+              [[ AND timestamp <= date(:date_end) ]]
+            ORDER BY
+              timestamp
+          library: vega-lite
+          display:
+            encoding:
+              x:
+                field: timestamp
+                type: temporal
+                timeUnit: yearmonthdate
+              y:
+                field: total
+                type: quantitative
+            mark:
+              type: area
+              point: true
+              line: true
+              tooltip: true
         financial-penalties:
           title: Financial penalties over time
           db: data
           query: >-
-            SELECT
-              json_extract(financial_penalties, '$.max') AS quantum,
-              timestamp
-            FROM
-              pdpc_decisions
-            WHERE
-              quantum > 0
+            SELECT * FROM (
+              SELECT
+                "raw" AS type,
+                json_extract(financial_penalties, '$.max') AS amount,
+                date(timestamp) AS timestamp
+              FROM
+                pdpc_decisions
+              WHERE
+                amount > 0
+              UNION
+              SELECT
+                "average" AS type,
+                AVG(json_extract(financial_penalties, '$.max')) AS average,
+                strftime("%Y-06-30", timestamp) AS timestamp
+              FROM
+                pdpc_decisions
+              GROUP BY strftime("%Y", timestamp)
+              UNION
+              SELECT
+                "median" AS type,
+                AVG(
+                  CASE
+                    WHEN row_number IN (
+                      row_count / 2 + 1,
+                      row_count / 2 + 1 - (row_count % 2 = 0)
+                    ) THEN amount
+                  END
+                ) AS amount,
+                timestamp
+              FROM
+                (
+                  SELECT
+                    json_extract(financial_penalties, '$.max') AS amount,
+                    ROW_NUMBER() OVER (
+                      PARTITION BY strftime("%Y", timestamp)
+                      ORDER BY
+                        json_extract(financial_penalties, '$.max')
+                    ) AS row_number,
+                    COUNT(*) OVER (PARTITION BY strftime("%Y", timestamp)) AS row_count,
+                    strftime("%Y-06-30", timestamp) AS timestamp
+                  FROM
+                    pdpc_decisions
+                  WHERE amount > 0
+                )
+              GROUP BY
+                strftime("%Y", timestamp)
+            ) WHERE TRUE
               [[ AND timestamp >= date(:date_start) ]]
               [[ AND timestamp <= date(:date_end) ]]
-            ORDER BY 
-              timestamp ASC
+            ORDER BY timestamp
           library: vega-lite
           display:
+            height: container
+            autosize:
+              resize: true
+            encoding:
+              x:
+                field: timestamp
+                type: temporal
+                timeUnit: yearmonthdate
+              y:
+                field: amount
+                type: quantitative
+                scale:
+                  domain: [0, 150000]
+                  clamp: true
             layer:
-              - mark: { type: line, point: true, tooltip: true }
-                encoding: 
-                  x:
-                    field: timestamp
-                    type: temporal
-                    timeUnit: yearmonthdate
-                  y:
-                    field: quantum
-                    type: quantitative
-              # - mark: { type: text }
-              #   encoding:
-              #     text: { field: quantum, type: quantitative }
+              - mark:
+                  type: point
+                  shape: cross
+                  size: 100
+                  filled: true
+                  tooltip: true
+                encoding:
+                  color: { datum: raw }
+                transform:
+                  - filter: { field: type, equal: raw }
+              - mark:
+                  type: line
+                  point: true
+                  tooltip: true
+                encoding:
+                  color: { datum: median }
+                transform:
+                  - filter: { field: type, equal: median }
+              - mark:
+                  type: line
+                  point: true
+                  tooltip: true
+                encoding:
+                  color: { datum: average }
+                transform:
+                  - filter: { field: type, equal: average }

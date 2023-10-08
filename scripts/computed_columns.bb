@@ -7,7 +7,7 @@
              [clojure.string :as str]
              [cheshire.core :as json]))
 
-(def FINANCIAL_PENALTY_REGEX (re-pattern "(?im) a\\sfinancial\\spenalty\\sof\\sS?\\$([0-9,]+)(\\.00)?\\swithin"))
+(def FINANCIAL_PENALTY_REGEX (re-pattern "(?im)a\\s+financial\\s+penalty\\s+of\\s+S?\\$([0-9,]+)(\\.00)?"))
 (defn- get-financial-penalties [pdf-content]
   (let [vals (map #(-> %
                        (second)
@@ -27,7 +27,7 @@
                                  PDPC_DECISIONS_TABLE
                                  " ADD COLUMN `financial_penalties` TEXT;"))
     (catch Exception e
-      (timbre/error "Column already exists")))
+      (timbre/error "`financial_penalties` column already exists")))
   (let [decisions (utils/run-sqlite-utils-on-db db
                                                 (str "SELECT _id, `pdf-content` FROM "
                                                      PDPC_DECISIONS_TABLE))]
