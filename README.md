@@ -15,7 +15,7 @@ The data remains owned by its respective owners. This repository is not affiliat
 
 ## Development
 
-In this project, everything is just a script (aka a microservice™). Although most of the scripts are [Babashka](https://github.com/babashka/babashka) scripts written in [Clojure](https://clojure.org/), new scripts can be in any laguage. 
+In this project, everything is just a script (aka a microservice™). Although most of the scripts are [Babashka](https://github.com/babashka/babashka) scripts written in [Clojure](https://clojure.org/), new scripts can be in any language. 
 
 The data is obtained periodically via scheduled GitHub action workflows and committed to this repository. Each Github Action runs one of the input scripts in the [`/input` folder](./input/). Each input script stores the data obtained in a JSON file in the [`/data` folder](./data/). Each JSON file is just a snapshot in time, i.e. it contains only the data obtained in the last run of the respective script as opposed to all data ever obtained using that script. 
 
