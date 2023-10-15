@@ -5,7 +5,7 @@
             [babashka.curl :as curl]
             [babashka.pods :as pods]
             [cheshire.core :as json]
-            [input.utils :as utils]
+            [input.utils.general :as utils]
             [input.hearings.populate_hearing_data :refer [populate-hearing-data]])
   (:import [java.time LocalDateTime]
            [java.time.format DateTimeFormatter])

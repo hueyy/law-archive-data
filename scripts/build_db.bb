@@ -1,36 +1,24 @@
 #!/usr/bin/env bb
 
 (ns scripts.build-db
-  (:require [babashka.process :refer [shell sh]]
-            [babashka.fs :as fs]
-            [cheshire.core :as json]
-            [clojure.string :as str]
+  (:require [babashka.process :refer [shell]]
             [taoensso.timbre :as timbre]
             [scripts.utils :as utils]
             [scripts.computed-columns :refer [add-computed-columns]]))
 
-(def MERGESTAT_BINARY "mergestat")
 (def DB_FILE "data/data.db")
 
-(defn download-mergestat []
-  (timbre/info "Downloading mergestat")
-  (sh "wget" "https://github.com/mergestat/mergestat-lite/releases/download/v0.6.1/mergestat-linux-amd64.tar.gz")
-  (timbre/info "Extracting mergestat")
-  (sh "tar -xvf" "mergestat-linux-amd64.tar.gz")
-  (timbre/info "Cleaning up unnecessary mergestat files")
-  (sh "rm" "mergestat-linux-amd64.tar.gz" "libmergestat.so")
-  (timbre/info "Setting permissions for mergestat")
-  (sh "chmod +x" MERGESTAT_BINARY))
-
-(defn get-ignored-commits [file]
-  (when (not (fs/exists? MERGESTAT_BINARY))
-    (download-mergestat))
-  (->> (-> (sh "./mergestat -f json"
-               (str "SELECT files.path, hash FROM commits, files WHERE files.path IS NOT '" file "'"))
-           :out
-           (json/parse-string true))
-       (map :hash)
-       (str/join " ")))
+;; (defn get-ignored-commits [file]
+;;   (when (-> "mergestat" (fs/exists?) (not))
+;;     (utils/download-binary "https://github.com/mergestat/mergestat-lite/releases/download/v0.6.1/mergestat-linux-amd64.tar.gz"
+;;                            :untar? true
+;;                            :filename "mergestat"))
+;;   (->> (-> (sh "./mergestat -f json"
+;;                (str "SELECT files.path, hash FROM commits, files WHERE files.path IS NOT '" file "'"))
+;;            :out
+;;            (json/parse-string true))
+;;        (map :hash)
+;;        (str/join " ")))
 
 (defn generate-db
   ([namespace input-file]

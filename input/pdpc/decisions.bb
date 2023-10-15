@@ -2,7 +2,7 @@
   (:require [babashka.curl :as curl]
             [babashka.pods :as pods]
             [clojure.string :as str]
-            [input.utils :as utils]
+            [input.utils.general :as utils]
             [cheshire.core :as json]
             [taoensso.timbre :as timbre]))
 

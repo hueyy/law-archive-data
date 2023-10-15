@@ -3,7 +3,7 @@
 (ns input.hearings.populate_hearing_data
   (:require [babashka.curl :as curl]
             [babashka.pods :as pods]
-            [input.utils :as utils]))
+            [input.utils.general :as utils]))
 
 (pods/load-pod 'retrogradeorbit/bootleg "0.1.9")
 
