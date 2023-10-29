@@ -3,7 +3,7 @@
 (ns input.hearings.populate_hearing_data
   (:require [babashka.curl :as curl]
             [babashka.pods :as pods]
-            [input.utils :as utils]))
+            [input.utils.general :as utils]))
 
 (pods/load-pod 'retrogradeorbit/bootleg "0.1.9")
 
@@ -53,11 +53,11 @@
                          (s/select (s/child
                                     (s/and (s/class "row")
                                            (s/class "hearing-party")))))]
-    {:nature-of-case (get-field-value hearing-details-el #"^Nature of case$")
-     :hearing-type (get-field-value hearing-details-el #"^Hearing type$")
-     :charge-number (get-field-value hearing-details-el #"^Charge number$")
-     :offence-description (get-field-value hearing-details-el #"^Offence description$")
-     :hearing-outcome (get-field-value hearing-details-el #"^Hearing outcome$")
+    {:nature-of-case (get-field-value hearing-details-el #"(?i)^Nature of case$")
+     :hearing-type (get-field-value hearing-details-el #"(?i)^Hearing type$")
+     :charge-number (get-field-value hearing-details-el #"(?i)^Charge number$")
+     :offence-description (get-field-value hearing-details-el #"(?i)^Offence description$")
+     :hearing-outcome (get-field-value hearing-details-el #"(?i)^Hearing outcome$")
      :parties (map parse-party-el parties-els)}))
 
 (defn populate-hearing-data [hearings]

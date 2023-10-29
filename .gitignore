@@ -8,9 +8,15 @@ bootleg
 *.db
 *.db-journal
 *.pdf
+
+# Binaries
 /mergestat
 /libmergestat.so
+/curl-impersonate-ff
+
+# VSCode
 .venv
 .vscode
+
 # Local Netlify folder
 .netlify

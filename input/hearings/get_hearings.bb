@@ -5,7 +5,7 @@
             [babashka.curl :as curl]
             [babashka.pods :as pods]
             [cheshire.core :as json]
-            [input.utils :as utils]
+            [input.utils.general :as utils]
             [input.hearings.populate_hearing_data :refer [populate-hearing-data]])
   (:import [java.time LocalDateTime]
            [java.time.format DateTimeFormatter])
@@ -105,7 +105,7 @@
                                 (s/child (s/class "pagination-summary")))
                                (first)
                                (utils/get-el-content)
-                               (re-find #"Showing results 1-500 of (\d{3,})."))]
+                               (re-find #"(?i)Showing results 1-500 of (\d{3,})."))]
     (if (nil? pagination-status)
       0
       (-> pagination-status (last) (Integer.)
