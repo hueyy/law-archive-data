@@ -6,12 +6,13 @@ This repository contains Singapore legal data obtained various public sources an
 - Senior Counsels: [`/data/sc.json`](./data/sc.json)
 - PDPC undertakings: [`/data/pdpc-undertakings.json`](./data/pdpc-undertakings.json)
 - PDPC decisions: [`/data/pdpc-decisions.json`](./data/pdpc-decisions.json)
+- LSS DT reports: [`/data/lss-dt-reports.json`](./data/lss-dt-reports.json)
 
 You can view and query the data using [this Datasette instance](https://law-archive-data.fly.dev/data).
 
 The code and configuration files in this repository are licensed under the EUPL-1.2 as set out in the [LICENCE](./LICENCE) file.
 
-The data remains owned by its respective owners. This repository is not affiliated with the Singapore Academy of Law, Singapore Courts, or any government agency, and is provided for convenience only.
+The data remains owned by its respective owners. This repository is not affiliated with the Singapore Academy of Law, Singapore Courts, Law Society, or any government agency, and is provided for convenience only.
 
 ## Development
 
@@ -23,7 +24,9 @@ The [`/.github/workflows/deploy.yml`](./.github/workflows/deploy.yml) runs the [
 
 ### Local development
 
-After cloning this repository, you can generate the SQLite database on your machine by running the [`/scripts/build_db.bb` script](./scripts/build_db.bb). This may take some time (possibly >1h) as there have been many commits to this repository. The `build_db.bb` script also does some processing on the data, e.g. it creates and populates certain columns for ease of use based on the raw data (see e.g. [`/scripts/computed_columns.bb`](./scripts/computed_columns.bb)). Alternatively, you can download a copy of the database from [law-archive-data.fly.dev](https://law-archive-data.fly.dev).
+Make sure you have Babashka, Python, and Poetry installed.
+
+After cloning this repository and installing the Poetry dependencies by running `poetry install`, you can generate the SQLite database on your machine by running the [`/scripts/build_db.bb` script](./scripts/build_db.bb). This may take some time (possibly >1h) as there have been many commits to this repository. The `build_db.bb` script also does some processing on the data, e.g. it creates and populates certain columns for ease of use based on the raw data (see e.g. [`/scripts/computed_columns.bb`](./scripts/computed_columns.bb)). Alternatively, you can download a copy of the database from [law-archive-data.fly.dev](https://law-archive-data.fly.dev).
 
 Once you have the SQLite data, you can analyse it by running [Datasette](https://datasette.io/) locally. You can use the [`/scripts/dev_docker.bb` script](./scripts/dev_docker.bb). 
 
@@ -32,3 +35,4 @@ cd law-archive-data
 bb 
 ```
 
+It may be helpful to refer to the Docker images or the GitHub actions for a better idea of how the project functions and how to run certain scripts.
