@@ -14,9 +14,10 @@
 
 (defn parse-date
   [pattern date]
-  (if (nil? (re-find #"[HmsZ]" "EEE, dd MMM yyyy HH:mm:ss Z"))
-    (LocalDate/parse date (DateTimeFormatter/ofPattern pattern))
-    (LocalDateTime/parse date (DateTimeFormatter/ofPattern pattern))))
+  (when (not (str/blank? date))
+    (if (nil? (re-find #"[HmsZ]" "EEE, dd MMM yyyy HH:mm:ss Z"))
+      (LocalDate/parse date (DateTimeFormatter/ofPattern pattern))
+      (LocalDateTime/parse date (DateTimeFormatter/ofPattern pattern)))))
 
 (defn parse-short-date
   "Parses short dates (e.g. 8 Jul 2023)"
@@ -33,6 +34,4 @@
 (defn to-iso-8601
   "Format a date in ISO 8601 format"
   [date]
-  (if (str/blank? date)
-    nil
-    (.format DateTimeFormatter/ISO_LOCAL_DATE date)))
+  (.format DateTimeFormatter/ISO_LOCAL_DATE date))

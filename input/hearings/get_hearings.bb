@@ -105,7 +105,7 @@
                                 (s/child (s/class "pagination-summary")))
                                (first)
                                (utils/get-el-content)
-                               (re-find #"Showing results 1-500 of (\d{3,})."))]
+                               (re-find #"(?i)Showing results 1-500 of (\d{3,})."))]
     (if (nil? pagination-status)
       0
       (-> pagination-status (last) (Integer.)

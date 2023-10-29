@@ -7,6 +7,7 @@
             [clojure.string :as str]
             [input.utils.general :as utils]
             [input.utils.date :as date]
+            [input.utils.pdf :as pdf]
             [cheshire.core :as json]
             [taoensso.timbre :as timbre]))
 
@@ -60,7 +61,7 @@
                         (first))
         pdf-url (->> description
                      (s/select (s/and (s/tag :a)
-                                      (utils/find-in-text #"^(\s| )*here(\s| )*$")))
+                                      (utils/find-in-text #"(?i)^(\s| )*here(\s| )*$")))
                      (first)
                      :attrs
                      :href
@@ -70,7 +71,7 @@
                       (utils/get-el-content)
                       (str/trim))
      :pdf-url pdf-url
-     :pdf-content (utils/get-pdf-content pdf-url)}))
+     :pdf-content (pdf/get-content-from-url pdf-url)}))
 
 (defn- get-undertaking-detail [url]
   (timbre/info "Fetching undertaking detail: " url)

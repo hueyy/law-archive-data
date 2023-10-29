@@ -1,8 +1,7 @@
 (ns scripts.utils
   (:require [babashka.process :refer [process sh shell]]
             [cheshire.core :as json]
-            [taoensso.timbre :as timbre]
-            [clojure.string :as str]))
+            [taoensso.timbre :as timbre]))
 
 (defn run-sql-file-on-db [db f]
   (let [stream (-> (process ["cat" f]) :out)]

@@ -38,12 +38,14 @@
 (def SC_JSON "data/sc.json")
 (def PDPC_UNDERTAKINGS_JSON "data/pdpc-undertakings.json")
 (def PDPC_DECISIONS_JSON "data/pdpc-decisions.json")
+(def LSS_DT_REPORTS_JSON "data/lss-dt-reports.json")
 
 (defn run []
   (generate-db "hearings" HEARINGS_JSON "link")
   (generate-db "sc" SC_JSON "name")
   (generate-db "pdpc_undertakings" PDPC_UNDERTAKINGS_JSON "url")
   (generate-db "pdpc_decisions" PDPC_DECISIONS_JSON "url")
+  (generate-db "lss_dt_reports" LSS_DT_REPORTS_JSON)
   (utils/run-sql-file-on-db DB_FILE "scripts/create-views.sql")
   (add-computed-columns DB_FILE))
 

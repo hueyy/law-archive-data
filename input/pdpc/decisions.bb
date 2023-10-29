@@ -5,7 +5,8 @@
             [input.utils.general :as utils]
             [input.utils.date :as date]
             [cheshire.core :as json]
-            [taoensso.timbre :as timbre]))
+            [taoensso.timbre :as timbre]
+            [input.utils.pdf :as pdf]))
 
 (pods/load-pod 'retrogradeorbit/bootleg "0.1.9")
 
@@ -104,7 +105,7 @@
                                         (s/tag :li)))
                 (map parse-tag-html))
      :pdf-url pdf-url
-     :pdf-content (utils/get-pdf-content pdf-url)}))
+     :pdf-content (pdf/get-content-from-url pdf-url)}))
 
 (defn- get-decision-detail [url]
   (timbre/info "Fetching PDPC decision detail: " url)

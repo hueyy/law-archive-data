@@ -60,15 +60,6 @@
   {:headers {"Content-Type" "application/json; charset=utf-8"}
    :body (json/generate-string body)})
 
-(def PDF_FILENAME "pdf.pdf")
-(defn get-pdf-content [url]
-  (timbre/info "Handling PDF: " url)
-  (sh "wget" "--output-document" PDF_FILENAME url)
-  (let [pdf-content (-> (sh ["pdftotext" PDF_FILENAME "-"])
-                        :out)]
-    (sh "rm" PDF_FILENAME)
-    pdf-content))
-
 (defn download-binary [url & {:keys [untar? filename]
                               :or {untar? false
                                    filename nil}}]
