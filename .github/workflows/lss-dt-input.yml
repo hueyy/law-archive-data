@@ -2,11 +2,11 @@ name: Obtain latest LSS DT reports
 
 on:
   workflow_dispatch:
-  schedule:
+  # schedule:
     # - cron: '49 14 * * 2,4,6' # 10.49PM GMT+8 every Tues, Thurs, and Sat
 
 jobs:
-  pdpc-decisions:
+  lss-dt-reports:
     runs-on: ubuntu-latest
     steps:
     - name: Check out this repo
@@ -18,7 +18,7 @@ jobs:
       with:
         babashka-version: 1.3.185
     - name: Fetch latest data
-      run: bb --main input.lss.dt_reports
+      run: bb --main input.lss.dt-reports
     - name: Commit and push if it changed
       run: |-
         git config user.name "Automated update"
