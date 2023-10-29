@@ -94,7 +94,7 @@
                    :untar? true
                    :filename "curl-impersonate-ff"))
 
-(def CURL_IMPERSONATE_BINARY "curl-impersonate-ff")
+(def CURL_IMPERSONATE_BINARY "./curl-impersonate-ff")
 (def USER_AGENT "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36")
 (defn curli [url]
   (when (-> CURL_IMPERSONATE_BINARY (fs/exists?) (not))

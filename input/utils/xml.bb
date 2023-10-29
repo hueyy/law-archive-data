@@ -1,7 +1,8 @@
 (ns input.utils.xml
-  (:require [clojure.data.xml :as xml]
+  (:require [clojure.data.xml :refer [parse-str]]
             [clojure.string :as str]
-            [input.utils.date :as date]))
+            [input.utils.date :as date]
+            [taoensso.timbre :as timbre]))
 
 (defn is-xml-el? [el]
   (instance? clojure.data.xml.node.Element el))
@@ -26,8 +27,9 @@
                     (date/to-iso-8601))}))
 
 (defn parse-rss-feed [content]
+  (timbre/info "parse-rss-feed: " content)
   (let [elements (->> content
-                      (xml/parse-str)
+                      (parse-str)
                       :content
                       (filter is-xml-el?)
                       (first)

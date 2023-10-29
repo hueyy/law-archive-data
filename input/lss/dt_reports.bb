@@ -90,11 +90,13 @@
                  (utils/parse-html)
                  (parse-report-detail)))))
 
-(def get-reports-page
-  (memoize (fn ([] (get-reports-page 1))
-             ([page-number]
-              (-> (utils/curli (str URL "?paged=" page-number))
-                  (xml/parse-rss-feed))))))
+(defn get-reports-page
+  ([] (get-reports-page 1))
+  ([page-number]
+   (let [url (str URL "?paged=" page-number)]
+     (timbre/info "Parsing: " url)
+     (-> (utils/curli url)
+         (xml/parse-rss-feed)))))
 
 (defn get-all-pages
   ([]
