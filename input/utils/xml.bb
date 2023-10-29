@@ -27,7 +27,6 @@
                     (date/to-iso-8601))}))
 
 (defn parse-rss-feed [content]
-  (timbre/info "parse-rss-feed: " content)
   (let [elements (->> content
                       (parse-str)
                       :content

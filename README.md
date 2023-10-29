@@ -1,12 +1,12 @@
 # law-archive-data
 
-This repository contains Singapore legal data obtained various public sources and converted into a machine-readable format, including relating to the following:
+This repository contains Singapore legal data obtained various public sources and converted into a machine-readable format, including the following:
 
 - Court hearings: [`/data/hearings.json`](./data/hearings.json)
 - Senior Counsels: [`/data/sc.json`](./data/sc.json)
 - PDPC undertakings: [`/data/pdpc-undertakings.json`](./data/pdpc-undertakings.json)
 - PDPC decisions: [`/data/pdpc-decisions.json`](./data/pdpc-decisions.json)
-- LSS DT reports: [`/data/lss-dt-reports.json`](./data/lss-dt-reports.json)
+- LSS DT reports: [`/data/lss-dt-.reportsjson`](./data/lss-dt-reports.json)
 
 You can view and query the data using [this Datasette instance](https://law-archive-data.fly.dev/data).
 
@@ -22,11 +22,32 @@ The data is obtained periodically via scheduled GitHub action workflows and comm
 
 The [`/.github/workflows/deploy.yml`](./.github/workflows/deploy.yml) runs the [`/scripts/build_db.bb`](./scripts/build_db.bb) script which uses the [`git-history`](https://github.com/simonw/git-history) tool to create a SQLite database from the historical data across all the commits in this repository. The script then builds a [Datasette](https://datasette.io/) Docker image and deploys that via [Fly.io](https://fly.io/).
 
+Some of the scripts in the `/scripts` folder run Python tools. This project uses [Poetry](https://github.com/babashka/babashka) to manage its [Python](https://www.python.org/) dependencies, so do install Poetry and the dependencies before running those scripts. 
+
+### Setup
+
+Make sure you have [Babashka]((https://github.com/babashka/babashka)), [Python](https://www.python.org/), and [Poetry](https://github.com/babashka/babashka) installed.
+
+Install the Poetry dependencies by running `poetry install`. 
+
+This project uses [`pdftotext`](https://manpages.ubuntu.com/manpages/lunar/en/man1/pdftotext.1.html) to extract text from PDFs, so you also need to install it (it is bundled within [`popple`](https://en.wikipedia.org/wiki/Poppler_(software))):
+
+On Ubuntu/Debian:
+
+```
+sudo apt install poppler-utils
+```
+
+On macOS, you can install it using [Homebrew](https://formulae.brew.sh/formula/poppler):
+
+```
+brew install poppler
+```
+
+
 ### Local development
 
-Make sure you have Babashka, Python, and Poetry installed.
-
-After cloning this repository and installing the Poetry dependencies by running `poetry install`, you can generate the SQLite database on your machine by running the [`/scripts/build_db.bb` script](./scripts/build_db.bb). This may take some time (possibly >1h) as there have been many commits to this repository. The `build_db.bb` script also does some processing on the data, e.g. it creates and populates certain columns for ease of use based on the raw data (see e.g. [`/scripts/computed_columns.bb`](./scripts/computed_columns.bb)). Alternatively, you can download a copy of the database from [law-archive-data.fly.dev](https://law-archive-data.fly.dev).
+After cloning this repository and following [the setup steps above](#setup), you can generate the SQLite database on your machine by running the [`/scripts/build_db.bb` script](./scripts/build_db.bb). This may take some time (possibly >1h) as there have been many commits to this repository. The `build_db.bb` script also does some processing on the data, e.g. it creates and populates certain columns for ease of use based on the raw data (see e.g. [`/scripts/computed_columns.bb`](./scripts/computed_columns.bb)). Alternatively, you can download a copy of the database from [law-archive-data.fly.dev](https://law-archive-data.fly.dev).
 
 Once you have the SQLite data, you can analyse it by running [Datasette](https://datasette.io/) locally. You can use the [`/scripts/dev_docker.bb` script](./scripts/dev_docker.bb). 
 
