@@ -25,8 +25,28 @@
                      (first))]
     {:html (-> article (butils/convert-to :html))}))
 
+(defn parse-report-detail-html [h-map]
+  (let [article (->> h-map
+                     (s/select (s/descendant (s/tag :article)
+                                             (s/class "mkdf-post-text-inner")))
+                     (first))
+        timestamp (->> h-map
+                       (s/select
+                        (s/and (s/tag :meta)
+                               (s/attr :property #(= % "article:published_time"))))
+                       (first)
+                       :attrs
+                       :content)
+        header-els (->> article
+                        (s/select (utils/find-in-text #"^In the Matter of")))
+        header-tag (->> header-els
+                        (first)
+                        :tag)]
+    {:timestamp timestamp
+     :header-tag header-tag}))
+
 (defn get-report-detail [url]
-  (-> (utils/curli URL)
+  (-> (utils/curli url)
       (utils/parse-html)))
 
 

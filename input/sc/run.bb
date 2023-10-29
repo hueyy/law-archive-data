@@ -5,6 +5,7 @@
             [babashka.pods :as pods]
             [clojure.string :as str]
             [input.utils.general :as utils]
+            [input.utils.date :as date]
             [cheshire.core :as json]))
 
 (pods/load-pod 'retrogradeorbit/bootleg "0.1.9")
@@ -68,7 +69,8 @@
             :appointment-date (-> (nth tds 4)
                                   (get-span-content)
                                   (utils/clean-string)
-                                  (utils/format-short-date))})))
+                                  (date/parse-short-date)
+                                  (date/to-iso-8601))})))
 
 (defn- parse-page [h-map]
   (->> (s/select (s/descendant (s/tag :table)

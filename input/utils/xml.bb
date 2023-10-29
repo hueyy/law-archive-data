@@ -1,9 +1,7 @@
 (ns input.utils.xml
   (:require [clojure.data.xml :as xml]
-            [clojure.string :as str])
-  (:import [java.time LocalDateTime]
-           [java.time.format DateTimeFormatter])
-  (:gen-class))
+            [clojure.string :as str]
+            [input.utils.date :as date]))
 
 (defn is-xml-el? [el]
   (instance? clojure.data.xml.node.Element el))
@@ -18,18 +16,14 @@
        :content
        (str/join "")))
 
-(defn parse-date [date]
-  (.format DateTimeFormatter/ISO_LOCAL_DATE_TIME
-           (LocalDateTime/parse date
-                                (DateTimeFormatter/ofPattern "EEE, dd MMM yyyy HH:mm:ss Z"))))
-
 (defn parse-rss-item [xml-item]
   (let [elements (->> xml-item :content
                       (filter is-xml-el?))]
     {:title (get-element-content-by-tag :title elements)
      :link (get-element-content-by-tag :link elements)
      :pub-date (->> (get-element-content-by-tag :pubDate elements)
-                    (parse-date))}))
+                    (date/parse-long-date)
+                    (date/to-iso-8601))}))
 
 (defn parse-rss-feed [content]
   (let [elements (->> content

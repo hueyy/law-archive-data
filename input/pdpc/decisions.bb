@@ -3,6 +3,7 @@
             [babashka.pods :as pods]
             [clojure.string :as str]
             [input.utils.general :as utils]
+            [input.utils.date :as date]
             [cheshire.core :as json]
             [taoensso.timbre :as timbre]))
 
@@ -29,7 +30,8 @@
 (defn- parse-decision-json [json]
   (merge json
          {:timestamp (-> json :timestamp
-                         (utils/format-short-date))
+                         (date/parse-short-date)
+                         (date/to-iso-8601))
           :url (->> json :url
                     (utils/make-absolute-url DOMAIN))}))
 
@@ -87,7 +89,8 @@
                      (first)
                      (utils/get-el-content)
                      (utils/clean-string)
-                     (utils/format-short-date))
+                     (date/parse-short-date)
+                     (date/to-iso-8601))
      :description (-> (->> article
                            (s/select (s/and (s/class "rte")
                                             (s/tag :div)))

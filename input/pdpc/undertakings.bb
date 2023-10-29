@@ -6,6 +6,7 @@
             [babashka.fs :as fs]
             [clojure.string :as str]
             [input.utils.general :as utils]
+            [input.utils.date :as date]
             [cheshire.core :as json]
             [taoensso.timbre :as timbre]))
 
@@ -40,7 +41,8 @@
                      (first)
                      (utils/get-el-content)
                      (utils/clean-string)
-                     (utils/format-short-date))}))
+                     (date/parse-short-date)
+                     (date/to-iso-8601))}))
 
 (defn- parse-undertakings-html [h-map]
   (->> h-map
