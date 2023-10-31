@@ -63,7 +63,8 @@
          {:pdf-link pdf-link
           :pdf-content (pdf/get-content-from-url
                         pdf-link
-                        :ocr true)})))))
+                        :ocr? true
+                        :ocr-options {:skip-strategy :skip-text})})))))
 
 (defn parse-report-detail [h-map]
   (let [article (->> h-map
@@ -85,10 +86,11 @@
          raw-cases)))
 
 (def get-report-detail
-  (memoize (fn [url]
-             (-> (utils/curli url)
-                 (utils/parse-html)
-                 (parse-report-detail)))))
+  (fn [url]
+    (->> (utils/curli url)
+         (utils/parse-html)
+         (parse-report-detail)
+         (map #(merge % {:url url})))))
 
 (defn get-reports-page
   ([] (get-reports-page 1))
