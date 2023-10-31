@@ -15,7 +15,7 @@
 (defn parse-date
   [pattern date]
   (when (not (str/blank? date))
-    (if (nil? (re-find #"[HmsZ]" "EEE, dd MMM yyyy HH:mm:ss Z"))
+    (if (nil? (re-find #"[HmsZ]" date))
       (LocalDate/parse date (DateTimeFormatter/ofPattern pattern))
       (LocalDateTime/parse date (DateTimeFormatter/ofPattern pattern)))))
 

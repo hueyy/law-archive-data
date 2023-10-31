@@ -23,7 +23,8 @@
   (let [temp-filename (random-pdf-filename 5)]
     (sh "mv" filename temp-filename)
     (apply shell (filter #(-> % (str/blank?) (not))
-                         ["ocrmypdf -l eng --rotate-pages"
+                         ["poetry run"
+                          "ocrmypdf -l eng --rotate-pages"
                           "--deskew"
                           (case skip-strategy
                             :skip-text "--skip-text"
