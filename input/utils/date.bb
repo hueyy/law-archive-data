@@ -22,9 +22,9 @@
 (defn parse-short-date
   "Parses short dates (e.g. 8 Jul 2023)"
   [date]
-  (-> date
-      (fix-month-names)
-      (parse-date "d MMM yyyy")))
+  (->> date
+       (fix-month-names)
+       (parse-date "d MMM yyyy")))
 
 (defn parse-long-date
   "Parses dates in the format EEE, dd MMM yyyy HH:mm:ss Z"
