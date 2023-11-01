@@ -26,7 +26,7 @@ jobs:
       with:
         babashka-version: 1.3.185
     - name: Install pdftotext
-      run: sudo apt-get install -y poppler-utils
+      run: sudo apt-get install -y poppler-utils tesseract-ocr
     - name: Fetch latest data
       run: bb --main input.pdpc.decisions
     - name: Commit and push if it changed
