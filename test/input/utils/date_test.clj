@@ -10,7 +10,9 @@
     "23 Jan 2001" "23 Jan 2001"
     "9th October 2050" "9th October 2050"
     "30 June 2005" "30 Jun 2005"
-    "17th July 2020" "17th Jul 2020"))
+    "17th July 2020" "17th Jul 2020"
+    nil nil
+    "" ""))
 
 (defn -main []
   (fix-month-names))

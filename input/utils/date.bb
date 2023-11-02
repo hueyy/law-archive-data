@@ -7,10 +7,12 @@
 (defn fix-month-names
   "Replaces non-standard month names in short dates, e.g. Sept instead of Sep, June instead of Jun, etc"
   [input-date]
-  (-> input-date
-      (str/replace #"\bSept\b" "Sep")
-      (str/replace #"\bJune\b" "Jun")
-      (str/replace #"\bJuly\b" "Jul")))
+  (if (not (str/blank? input-date))
+    (-> input-date
+        (str/replace #"\bSept\b" "Sep")
+        (str/replace #"\bJune\b" "Jun")
+        (str/replace #"\bJuly\b" "Jul"))
+    input-date))
 
 (defn parse-date
   [pattern date]
@@ -29,9 +31,11 @@
 (defn parse-long-date
   "Parses dates in the format EEE, dd MMM yyyy HH:mm:ss Z"
   [date]
-  (parse-date "EEE, dd MMM yyyy HH:mm:ss Z" date))
+  (when (not (str/blank? date))
+    (parse-date "EEE, dd MMM yyyy HH:mm:ss Z" date)))
 
 (defn to-iso-8601
   "Format a date in ISO 8601 format"
   [date]
-  (.format DateTimeFormatter/ISO_LOCAL_DATE date))
+  (when (not (str/blank? date))
+    (.format DateTimeFormatter/ISO_LOCAL_DATE date)))
