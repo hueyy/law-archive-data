@@ -35,7 +35,7 @@
     (parse-date "EEE, dd MMM yyyy HH:mm:ss Z" date)))
 
 (defn to-iso-8601
-  "Format a date in ISO 8601 format"
+  "Format a date in ISO 8601 (date only) format"
   [date]
-  (when (not (str/blank? date))
+  (when (not (nil? date))
     (.format DateTimeFormatter/ISO_LOCAL_DATE date)))
