@@ -6,7 +6,7 @@ This repository contains Singapore legal data obtained various public sources an
 - Senior Counsels: [`/data/sc.json`](./data/sc.json)
 - PDPC undertakings: [`/data/pdpc-undertakings.json`](./data/pdpc-undertakings.json)
 - PDPC decisions: [`/data/pdpc-decisions.json`](./data/pdpc-decisions.json)
-- LSS DT reports: [`/data/lss-dt-.reportsjson`](./data/lss-dt-reports.json)
+- LSS DT reports: [`/data/lss-dt-reports.json`](./data/lss-dt-reports.json)
 
 You can view and query the data using [this Datasette instance](https://law-archive-data.fly.dev/data).
 
@@ -30,7 +30,11 @@ Make sure you have [Babashka]((https://github.com/babashka/babashka)), [Python](
 
 Install the Poetry dependencies by running `poetry install`. 
 
-This project uses [`pdftotext`](https://manpages.ubuntu.com/manpages/lunar/en/man1/pdftotext.1.html) to extract text from PDFs, so you also need to install it (it is bundled within [`popple`](https://en.wikipedia.org/wiki/Poppler_(software))):
+This project uses various CLI utilities, which you will need to install to run the input scripts:
+
+#### pdftotext
+
+[`pdftotext`](https://manpages.ubuntu.com/manpages/lunar/en/man1/pdftotext.1.html) is used to extract text from PDFs. It is bundled within [`poppler`](https://en.wikipedia.org/wiki/Poppler_(software)).
 
 On Ubuntu/Debian:
 
@@ -44,6 +48,22 @@ On macOS, you can install it using [Homebrew](https://formulae.brew.sh/formula/p
 brew install poppler
 ```
 
+#### ocrmypdf
+
+[`ocrmypdf`](https://ocrmypdf.readthedocs.io/en/latest/) is used to run OCR on PDFs. It is a Poetry dependency already, but it does require [`tesseract`](https://github.com/tesseract-ocr/tesseract) and [`ghostscript`](https://www.ghostscript.com/) to be installed.
+
+On Ubuntu/Debian:
+
+```
+sudo apt install tesseract-ocr ghostscript
+```
+
+On macOS:
+
+```
+brew install tesseract ghostscript
+```
+
 
 ### Local development
 
@@ -53,7 +73,7 @@ Once you have the SQLite data, you can analyse it by running [Datasette](https:/
 
 ```bash
 cd law-archive-data
-bb 
+bb /scripts/dev_docker.bb
 ```
 
 It may be helpful to refer to the Docker images or the GitHub actions for a better idea of how the project functions and how to run certain scripts.
