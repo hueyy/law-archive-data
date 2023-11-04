@@ -17,8 +17,14 @@
   (-> (sh ["pdftotext" filename "-"])
       :out))
 
-(defn run-ocr [filename & {:keys [skip-strategy]
-                           :or {skip-strategy :none}}]
+(defn run-ocr [filename & {:keys [skip-strategy
+                                  optimize
+                                  invalidate-signatures?
+                                  output-type]
+                           :or {skip-strategy :none
+                                optimize 0
+                                invalidate-signatures? true
+                                output-type :pdf}}]
   (timbre/info "Running ocrmypdf with skip-strategy:" skip-strategy)
   (let [temp-filename (random-pdf-filename 5)]
     (sh "mv" filename temp-filename)
@@ -28,6 +34,13 @@
                           "-l" "eng"
                           "--rotate-pages"
                           "--deskew"
+                          "--optimize" optimize
+                          (if invalidate-signatures?
+                            "--invalidate-digital-signatures"
+                            "")
+                          "--output-type" (case output-type
+                                            :pdf "pdf"
+                                            :pdfa "pdfa")
                           (case skip-strategy
                             :skip-text "--skip-text"
                             :redo-ocr "--redo-ocr"
