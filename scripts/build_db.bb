@@ -34,6 +34,15 @@
            (catch Exception e
              (timbre/error e)))))))
 
+(defn setup-fts [table fields]
+  (try
+    (apply shell (concat ["poetry" "run"
+                          "sqlite-utils" "enable-fts"
+                          DB_FILE table]
+                         fields))
+    (catch Exception e
+      (timbre/error e))))
+
 (def HEARINGS_JSON "data/hearings.json")
 (def SC_JSON "data/sc.json")
 (def PDPC_UNDERTAKINGS_JSON "data/pdpc-undertakings.json")
@@ -47,6 +56,14 @@
   (generate-db "pdpc_decisions" PDPC_DECISIONS_JSON "url")
   (generate-db "lss_dt_reports" LSS_DT_REPORTS_JSON)
   (utils/run-sql-file-on-db DB_FILE "scripts/create-views.sql")
-  (add-computed-columns DB_FILE))
+  (add-computed-columns DB_FILE)
+  (setup-fts "hearings"
+             ["title" "parties" "offence-description"])
+  (setup-fts "pdpc_decisions"
+             ["title" "description" "pdf-content"])
+  (setup-fts "pdpc_undertakings"
+             ["organisation" "description" "pdf-content"])
+  (setup-fts "lss_dt_reports"
+             ["title" "content" "pdf-content"]))
 
 (run)
