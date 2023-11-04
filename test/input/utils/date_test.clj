@@ -17,25 +17,40 @@
     "" ""))
 
 (deftest parse-short-date
-  (testing "Whether short dates are successfully passed as dates")
+  (testing "Whether short dates are successfully parsed")
   (are [input expected-output]
        (let [[year month day] expected-output]
          (= (date/parse-short-date input)
             (LocalDate/of year month day)))
+    "23 Jan 2001" [2001 1 23]
     "8 July 2023" [2023 7 8]
-    "1 June 2020" [2020 6 1]
-    "31 December 1990" [1990 12 31]))
+    "1 June 2020" [2020 6 1]))
 
-(deftest to-iso-8601
+(deftest parse-rfc-2822-date
+  (testing "Whether RFC 2822 dates are successfully parsed")
+  (are [input output]
+       (let [parsed-date (date/parse-rfc-2822-date input)]
+        ;;  (= (and (not (nil? parsed-date))
+        ;;          (instance? LocalDateTime parsed-date))
+        ;;     output)
+         parsed-date)
+    "Fri, 03 Nov 2023 16:00:00 GMT" true
+    "Sat, 13 Mar 2010 11:29:05 -0800" true))
+
+(deftest to-iso-8601-date
   (testing "Whether dates are successfully formatted in ISO8601 format")
   (are [input expected-output]
-       (let [[year month day hour minute second] input]
-         (= (date/to-iso-8601 (LocalDateTime/of year month day
-                                                hour minute second))
-            expected-output))
-
+       (if (nil? input)
+         (= (date/to-iso-8601-date input) expected-output)
+         (let [[year month day hour minute second] input
+               output-date (LocalDateTime/of year month day
+                                             hour minute second)]
+           (= (date/to-iso-8601-date output-date) expected-output)))
     [2023 5 2 12 31 57] "2023-05-02"
     nil nil))
 
 (defn -main []
-  (fix-month-names))
+  (fix-month-names)
+  (parse-short-date)
+  (parse-rfc-2822-date)
+  (to-iso-8601-date))

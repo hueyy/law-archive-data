@@ -1,6 +1,6 @@
 (ns input.utils.date
   (:require [clojure.string :as str])
-  (:import [java.time LocalDate LocalDateTime]
+  (:import [java.time LocalDate LocalDateTime ZonedDateTime]
            [java.time.format DateTimeFormatter])
   (:gen-class))
 
@@ -17,9 +17,13 @@
 (defn parse-date
   [pattern date]
   (when (not (str/blank? date))
-    (if (nil? (re-find #"[HmsZ]" date))
-      (LocalDate/parse date (DateTimeFormatter/ofPattern pattern))
-      (LocalDateTime/parse date (DateTimeFormatter/ofPattern pattern)))))
+    (cond
+      (re-find #"[zZ]" pattern)
+      (ZonedDateTime/parse date (DateTimeFormatter/ofPattern pattern))
+      (re-find #"[Hms]" pattern)
+      (LocalDateTime/parse date (DateTimeFormatter/ofPattern pattern))
+      :else
+      (LocalDate/parse date (DateTimeFormatter/ofPattern pattern)))))
 
 (defn parse-short-date
   "Parses short dates (e.g. 8 Jul 2023)"
@@ -28,13 +32,27 @@
        (fix-month-names)
        (parse-date "d MMM yyyy")))
 
-(defn parse-long-date
-  "Parses dates in the format EEE, dd MMM yyyy HH:mm:ss Z"
+(defn parse-rfc-2822-date
+  "Parses dates in the RFC 2822 format. See: https://www.rfc-editor.org/rfc/rfc2822#section-3.3"
   [date]
   (when (not (str/blank? date))
-    (parse-date "EEE, dd MMM yyyy HH:mm:ss Z" date)))
+    (->> (for [format ["EEE, dd MMM yyyy HH:mm:ss Z"
+                       "EEE, dd MMM yyyy HH:mm:ss zzz"
+                       "dd MMM yyyy HH:mm:ss Z"
+                       "dd MMM yyyy HH:mm:ss zzz"]]
+           (try
+             (parse-date format date)
+             (catch Exception _)))
+         (filter #(not (nil? %)))
+         (first))))
 
 (defn to-iso-8601
+  "Format a date in ISO 8601 (full) format"
+  [date]
+  (when (not (nil? date))
+    (.format DateTimeFormatter/ISO_DATE_TIME date)))
+
+(defn to-iso-8601-date
   "Format a date in ISO 8601 (date only) format"
   [date]
   (when (not (nil? date))

@@ -22,7 +22,7 @@
                                   invalidate-signatures?
                                   output-type]
                            :or {skip-strategy :none
-                                optimize 0
+                                optimize "0"
                                 invalidate-signatures? true
                                 output-type :pdf}}]
   (timbre/info "Running ocrmypdf with skip-strategy:" skip-strategy)
