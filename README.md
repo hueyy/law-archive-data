@@ -28,7 +28,7 @@ Some of the scripts in the `/scripts` folder run Python tools. This project uses
 
 Make sure you have [Babashka]((https://github.com/babashka/babashka)), [Python](https://www.python.org/), and [Poetry](https://github.com/babashka/babashka) installed.
 
-Install the Poetry dependencies by running `poetry install`. 
+Install the Poetry dependencies by running `poetry install --no-root`. 
 
 This project uses various CLI utilities, which you will need to install to run the input scripts:
 
