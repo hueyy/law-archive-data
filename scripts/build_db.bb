@@ -21,7 +21,7 @@
 ;;        (str/join " ")))
 
 (defn use-optional-argument [value name]
-  (if (nil? value) "" (str name " " value)))
+  (if (nil? value) "" (str " " name " '" value "'")))
 
 (defn generate-db
   ([namespace input-file]
@@ -38,11 +38,12 @@
             " " DB_FILE
             " " input-file
             " --namespace " "'" namespace "'"
-            (use-optional-argument id "--id")
             (use-optional-argument start-at "--start-at")
             (use-optional-argument convert "--convert")
-            (use-optional-argument ignore "--ignore"))
+            (use-optional-argument ignore "--ignore")
+            (use-optional-argument id "--id"))
        (#(try
+           (println %)
            (shell %)
            (catch Exception e
              (timbre/error e)))))))
@@ -74,8 +75,7 @@
                :id "url")
   (generate-db "lss_dt_reports" LSS_DT_REPORTS_JSON
                :id "unique_id"
-               :start-at "8f629c3927889da7257bf73ac3cbf35f96cc954e"
-               :convert "[{**item, 'unique_id': item['title']+'_'+item['url']} for item in json.loads(content)]"
+               :convert "[{**item, \"unique_id\": item[\"title\"]+\"_\"+item[\"url\"]} for item in json.loads(content)]"
                :ignore "html")
   (utils/run-sql-file-on-db DB_FILE "scripts/create-views.sql")
   (add-computed-columns DB_FILE)
