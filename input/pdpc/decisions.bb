@@ -32,7 +32,7 @@
   (merge json
          {:timestamp (-> json :timestamp
                          (date/parse-short-date)
-                         (date/to-iso-8601))
+                         (date/to-iso-8601-date))
           :url (->> json :url
                     (utils/make-absolute-url DOMAIN))}))
 
@@ -91,7 +91,7 @@
                      (utils/get-el-content)
                      (utils/clean-string)
                      (date/parse-short-date)
-                     (date/to-iso-8601))
+                     (date/to-iso-8601-date))
      :description (-> (->> article
                            (s/select (s/and (s/class "rte")
                                             (s/tag :div)))

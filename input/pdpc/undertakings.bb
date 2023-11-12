@@ -43,7 +43,7 @@
                      (utils/get-el-content)
                      (utils/clean-string)
                      (date/parse-short-date)
-                     (date/to-iso-8601))}))
+                     (date/to-iso-8601-date))}))
 
 (defn- parse-undertakings-html [h-map]
   (->> h-map

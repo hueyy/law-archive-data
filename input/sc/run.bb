@@ -70,7 +70,7 @@
                                   (get-span-content)
                                   (utils/clean-string)
                                   (date/parse-short-date)
-                                  (date/to-iso-8601))})))
+                                  (date/to-iso-8601-date))})))
 
 (defn- parse-page [h-map]
   (->> (s/select (s/descendant (s/tag :table)
