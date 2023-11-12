@@ -6,8 +6,8 @@
 (def DOCKER_CONFIG "./docker/dev.docker-compose.yml")
 
 (defn -main []
-  (shell (str "docker-compose --file " DOCKER_CONFIG
+  (shell (str "docker compose --file " DOCKER_CONFIG
               " build"))
-  (shell (str "docker-compose --file " DOCKER_CONFIG " up")))
+  (shell (str "docker compose --file " DOCKER_CONFIG " up")))
 
 (-main)

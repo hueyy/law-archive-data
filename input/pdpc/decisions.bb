@@ -118,8 +118,8 @@
 
 (defn -main []
   (->>
-  ;;  (get-latest-n-decision-pages 3)
-   (get-all-decisions)
+   (get-latest-n-decision-pages 3)
+  ;;  (get-all-decisions)
    (map #(merge % (get-decision-detail (:url %))))
    (json/generate-string)
    (spit JSON_FILE)))

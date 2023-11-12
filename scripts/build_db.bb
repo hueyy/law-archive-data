@@ -43,7 +43,6 @@
             (use-optional-argument ignore "--ignore")
             (use-optional-argument id "--id"))
        (#(try
-           (println %)
            (shell %)
            (catch Exception e
              (timbre/error e)))))))

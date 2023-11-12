@@ -40,14 +40,24 @@ databases:
         hidden: true
       hearings_version:
         hidden: true
+      lss_dt_reports:
+        source: lawgazette.com.sg
+        source_url: https://lawgazette.com.sg/category/notices/disciplinary-tribunal-reports
+        sort_desc: timestamp
+      lss_dt_reports_changed:
+        hidden: true
+      lss_dt_reports_version:
+        hidden: true
       pdpc_decisions:
         source: pdpc.gov.sg/All-Commissions-Decisions
         source_url: https://www.pdpc.gov.sg/All-Commissions-Decisions
+        sort_desc: timestamp
       pdpc_decisions_changed:
         hidden: true
       pdpc_undertakings:
         source: pdpc.gov.sg/Undertakings
         source_url: https://www.pdpc.gov.sg/Undertakings
+        sort_desc: timestamp
       pdpc_decisions_version:
         hidden: true
       pdpc_undertakings_changed:
@@ -57,6 +67,7 @@ databases:
       sc:
         source: sal.org.sg/Services/Appointments/Senior-Counsel/Directory
         source_url: https://www.sal.org.sg/Services/Appointments/Senior-Counsel/Directory
+        sort_desc: appointment-date
       sc_changed:
         hidden: true
       sc_version:
