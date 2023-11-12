@@ -67,7 +67,24 @@ brew install tesseract ghostscript
 
 ### Local development
 
-After cloning this repository and following [the setup steps above](#setup), you can generate the SQLite database on your machine by running the [`/scripts/build_db.bb` script](./scripts/build_db.bb). This may take some time (possibly >1h) as there have been many commits to this repository. The `build_db.bb` script also does some processing on the data, e.g. it creates and populates certain columns for ease of use based on the raw data (see e.g. [`/scripts/computed_columns.bb`](./scripts/computed_columns.bb)). Alternatively, you can download a copy of the database from [law-archive-data.fly.dev](https://law-archive-data.fly.dev).
+After cloning this repository and following [the setup steps above](#setup), you can generate the SQLite database on your machine by running the [`/scripts/build_db.bb` script](./scripts/build_db.bb).
+
+If you do not have SQLite installed, you will need to install it.
+
+On Ubuntu/Debian:
+
+```
+sudo apt install sqlite3
+```
+
+On macOS:
+
+```
+brew install sqlite3
+```
+
+
+This may take some time (possibly >1h) as there have been many commits to this repository. The `build_db.bb` script also does some processing on the data, e.g. it creates and populates certain columns for ease of use based on the raw data (see e.g. [`/scripts/computed_columns.bb`](./scripts/computed_columns.bb)). Alternatively, you can download a copy of the database from [law-archive-data.fly.dev](https://law-archive-data.fly.dev).
 
 Once you have the SQLite data, you can analyse it by running [Datasette](https://datasette.io/) locally. You can use the [`/scripts/dev_docker.bb` script](./scripts/dev_docker.bb). 
 
