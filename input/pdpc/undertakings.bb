@@ -71,7 +71,9 @@
                       (utils/get-el-content)
                       (str/trim))
      :pdf-url pdf-url
-     :pdf-content (pdf/get-content-from-url pdf-url)}))
+     :pdf-content (pdf/get-content-from-url pdf-url
+                                            :ocr? true
+                                            :ocr-options {:skip-strategy :skip-text})}))
 
 (defn- get-undertaking-detail [url]
   (timbre/info "Fetching undertaking detail: " url)

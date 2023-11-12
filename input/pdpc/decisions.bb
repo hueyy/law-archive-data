@@ -105,7 +105,9 @@
                                         (s/tag :li)))
                 (map parse-tag-html))
      :pdf-url pdf-url
-     :pdf-content (pdf/get-content-from-url pdf-url)}))
+     :pdf-content (pdf/get-content-from-url pdf-url
+                                            :ocr? true
+                                            :ocr-options {:skip-strategy :skip-text})}))
 
 (defn- get-decision-detail [url]
   (timbre/info "Fetching PDPC decision detail: " url)
@@ -116,7 +118,8 @@
 
 (defn -main []
   (->>
-   (get-latest-n-decision-pages 3)
+  ;;  (get-latest-n-decision-pages 3)
+   (get-all-decisions)
    (map #(merge % (get-decision-detail (:url %))))
    (json/generate-string)
    (spit JSON_FILE)))
