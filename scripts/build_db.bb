@@ -23,12 +23,19 @@
 (defn generate-db
   ([namespace input-file]
    (generate-db namespace input-file nil))
-  ([namespace input-file id]
+  ([namespace input-file & {:keys [id
+                                   start-at
+                                   convert]
+                            :or {id nil
+                                 start-at nil
+                                 convert nil}}]
    (-> (str "poetry run git-history file"
             " " DB_FILE
             " " input-file
             " --namespace " "'" namespace "'"
-            (if (nil? id) "" (str " --id " id)))
+            (if (nil? id) "" (str " --id " id))
+            (if (nil? start-at) "" (str "--start-at " start-at))
+            (if (nil? convert) "" (str "--convert " convert)))
        (#(try
            (shell %)
            (catch Exception e
@@ -50,11 +57,18 @@
 (def LSS_DT_REPORTS_JSON "data/lss-dt-reports.json")
 
 (defn run []
-  (generate-db "hearings" HEARINGS_JSON "link")
-  (generate-db "sc" SC_JSON "name")
-  (generate-db "pdpc_undertakings" PDPC_UNDERTAKINGS_JSON "url")
-  (generate-db "pdpc_decisions" PDPC_DECISIONS_JSON "url")
-  (generate-db "lss_dt_reports" LSS_DT_REPORTS_JSON)
+  (generate-db "hearings" HEARINGS_JSON
+               :id "link")
+  (generate-db "sc" SC_JSON
+               :id "name")
+  (generate-db "pdpc_undertakings" PDPC_UNDERTAKINGS_JSON
+               :id "url")
+  (generate-db "pdpc_decisions" PDPC_DECISIONS_JSON
+               :id "url")
+  (generate-db "lss_dt_reports" LSS_DT_REPORTS_JSON
+               :id "unique_id"
+               :start-at "8f629c3927889da7257bf73ac3cbf35f96cc954e"
+               :convert "[{**item, 'unique_id': item['title']+'_'+item['url']} for item in json.loads(content)]")
   (utils/run-sql-file-on-db DB_FILE "scripts/create-views.sql")
   (add-computed-columns DB_FILE)
   (setup-fts "hearings"
