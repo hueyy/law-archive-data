@@ -36,7 +36,7 @@ jobs:
           path: ./data/data.db
           key: cache-${{ hashFiles('input/**') }}-${{ hashFiles('scripts/**') }}
       - name: Generate db
-        run: bb ./scripts/build_db.bb
+        run: bb --main scripts.build-db
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only --wait-timeout 1200
         env:

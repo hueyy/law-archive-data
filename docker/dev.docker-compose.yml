@@ -10,3 +10,4 @@ services:
       - 8001:8001
     volumes:
       - ../data:/data
+      - ../app:/app

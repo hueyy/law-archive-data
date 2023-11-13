@@ -1,5 +1,3 @@
-#!/usr/bin/env bb
-
 (ns scripts.build-db
   (:require [babashka.process :refer [shell]]
             [taoensso.timbre :as timbre]
@@ -7,18 +5,6 @@
             [scripts.computed-columns :refer [add-computed-columns]]))
 
 (def DB_FILE "data/data.db")
-
-;; (defn get-ignored-commits [file]
-;;   (when (-> "mergestat" (fs/exists?) (not))
-;;     (utils/download-binary "https://github.com/mergestat/mergestat-lite/releases/download/v0.6.1/mergestat-linux-amd64.tar.gz"
-;;                            :untar? true
-;;                            :filename "mergestat"))
-;;   (->> (-> (sh "./mergestat -f json"
-;;                (str "SELECT files.path, hash FROM commits, files WHERE files.path IS NOT '" file "'"))
-;;            :out
-;;            (json/parse-string true))
-;;        (map :hash)
-;;        (str/join " ")))
 
 (defn use-optional-argument [value name]
   (if (nil? value) "" (str " " name " '" value "'")))
@@ -62,7 +48,7 @@
 (def PDPC_DECISIONS_JSON "data/pdpc-decisions.json")
 (def LSS_DT_REPORTS_JSON "data/lss-dt-reports.json")
 
-(defn run []
+(defn -main []
   (generate-db "hearings" HEARINGS_JSON
                :id "link")
   (generate-db "sc" SC_JSON
@@ -87,4 +73,7 @@
   (setup-fts "lss_dt_reports"
              ["title" "content" "pdf-content"]))
 
-(run)
+(def docker-compose-file "./docker/build_db.docker-compose.yml")
+(defn docker []
+  (shell (str "docker compose --file " docker-compose-file " build"))
+  (shell (str "docker compose --file " docker-compose-file " run --rm app")))
