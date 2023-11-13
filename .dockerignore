@@ -5,7 +5,6 @@
 **/bootleg
 **/*.tgz
 **/.babashka
-**/*.html
 **/*.db-journal
 mergestat
 libmergestat.so

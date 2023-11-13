@@ -21,5 +21,5 @@ ENTRYPOINT [ \
   "-h", "0.0.0.0", \
   "--metadata", "/data/metadata.yml", \
   "--template-dir", "/app/html-templates", \
-  "--static assets:/app/dist", \
+  "--static", "assets:/app/dist", \
   "--setting", "force_https_urls", "1"]
