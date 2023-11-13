@@ -1,1 +1,27 @@
-Hello world
+{% extends "custom_base.html" %}
+
+{% block title %} LacunaDB {% endblock %}
+
+{% block content %}
+
+<section class="py-6 px-4 text-center max-w-sm mx-auto">
+  <h1 class="text-2xl font-black">LacunaDB</h1>
+  <div class="text-left my-4">
+    <ul class="list-disc">
+      <li>
+        <a href="/-/dashboards/pdpa">PDPA Enforcement</a>
+      </li>
+      <li>
+        <a href="/-/dashboards/senior_counsel">
+          Senior Counsel
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div>
+    <p>Alternatively, <a href="/data">explore the data directly</a>.</p>
+  </div>
+</section>
+
+
+{% endblock %}

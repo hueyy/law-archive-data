@@ -1,4 +1,4 @@
-(ns scripts.build-frontend-assets
+(ns scripts.dev-frontend
   (:require [babashka.process :refer [shell]]
             [taoensso.timbre :as timbre]))
 
@@ -9,4 +9,11 @@
               (if (nil? filename)
                 ""
                 (str "--output-document " filename " "))
-              url)))
+              url))))
+
+(defn run-tailwind []
+  (shell "pnpm exec tailwindcss -i ./styles/main.css -o ./dist/main.css --watch"))
+
+(defn -main []
+  (shell "pnpm i")
+  (run-tailwind))

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "law-archive-data"
+name = "lacuna-db"
 version = "0.0.1"
 description = ""
 authors = ["Huey <hello@huey.xyz>"]

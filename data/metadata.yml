@@ -1,9 +1,9 @@
-title: law-archive-data
-about: hueyy/law-archive-data
-about_url: https://github.com/hueyy/law-archive-data
+title: LacunaDB
+about: hueyy/lacuna-db
+about_url: https://github.com/hueyy/lacuna-db
 description_html: |-
   <div>
-    <p>law-archive-data provides Singapore legal data in machine-readable form</p>
+    <p>LacunaDB provides Singapore legal data in machine-readable form</p>
 
     <h2>Browse dashboards</h2>
     <ul class="bullets">
@@ -20,6 +20,9 @@ description_html: |-
     <h2>Databases</h2>
     <p>Alternatively, explore the data directly:</p>
   </div>
+extra_css_urls:
+  - https://code.cdn.mozilla.net/fonts/fira.css
+  - /assets/main.css
 databases:
   data:
     tables:

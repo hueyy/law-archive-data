@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: ./dev.Dockerfile
-    container_name: law-archive-data-dev-app
+    container_name: lacuna-db-dev-app
     restart: always
     ports:
       - 8001:8001

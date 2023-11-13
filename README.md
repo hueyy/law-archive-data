@@ -1,4 +1,4 @@
-# law-archive-data
+# LacunaDB
 
 This repository contains Singapore legal data obtained various public sources and converted into a machine-readable format, including the following:
 
@@ -65,13 +65,13 @@ This project uses various CLI utilities, which you will need to install to run t
 
 On Ubuntu/Debian:
 
-```
+```bash
 sudo apt install poppler-utils
 ```
 
 On macOS, you can install it using [Homebrew](https://formulae.brew.sh/formula/poppler):
 
-```
+```shell
 brew install poppler
 ```
 
@@ -81,13 +81,13 @@ brew install poppler
 
 On Ubuntu/Debian:
 
-```
+```bash
 sudo apt install tesseract-ocr ghostscript
 ```
 
 On macOS:
 
-```
+```shell
 brew install tesseract ghostscript
 ```
 
@@ -100,13 +100,13 @@ If you do not have SQLite installed, you will need to install it.
 
 On Ubuntu/Debian:
 
-```
+```bash
 sudo apt install sqlite3
 ```
 
 On macOS:
 
-```
+```shell
 brew install sqlite3
 ```
 
@@ -118,7 +118,7 @@ This may take some time (possibly >1h) as there have been many commits to this r
 Once you have the SQLite data, you can analyse it by running [Datasette](https://datasette.io/) locally. You can use the [`/scripts/dev_docker.bb` script](./scripts/dev_docker.bb). 
 
 ```bash
-cd law-archive-data
+cd lacunadb
 bb /scripts/dev_docker.bb
 ```
 

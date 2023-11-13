@@ -8,11 +8,11 @@ Since [TailwindCSS](https://tailwindcss.com/) is used, you will need to install 
 
 ```bash
 pnpm i
-pnpm exec tailwindcss -i ./src/main.css -o ./dist/main.css --watch
+pnpm exec tailwindcss -i ./styles/main.css -o ./dist/main.css --watch
 ```
 
 ## Production
 
 ```
-pnpm exec tailwindcss -i ./src/main.css -o ./dist/main.css --minify
+pnpm exec tailwindcss -i ./styles/main.css -o ./dist/main.css --minify
 ```
