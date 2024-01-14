@@ -3,7 +3,7 @@ name: Obtain latest stc-judgments data
 on:
   workflow_dispatch:
   schedule:
-    - cron: '15 15 * * 1' # 11.15PM GMT+8 every Monday
+    - cron: '41 15 * * *' # 3.41AM GMT+8
 
 jobs:
   sc:

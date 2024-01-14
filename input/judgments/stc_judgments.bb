@@ -122,7 +122,9 @@
 
 (defn get-stc-judgments []
   (->> (get-feed)
-       (map #((Thread/sleep 5000) (populate-case-data %)))))
+       (map #(do
+               (Thread/sleep 5000)
+               (populate-case-data %)))))
 
 (defn -main []
   (->> (get-stc-judgments)

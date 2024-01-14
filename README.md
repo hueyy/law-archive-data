@@ -7,6 +7,7 @@ This repository contains Singapore legal data obtained various public sources an
 - PDPC undertakings: [`/data/pdpc-undertakings.json`](./data/pdpc-undertakings.json)
 - PDPC decisions: [`/data/pdpc-decisions.json`](./data/pdpc-decisions.json)
 - LSS DT reports: [`/data/lss-dt-reports.json`](./data/lss-dt-reports.json)
+- State Court judgments [`/data/stc-judgments.json`](./data/stc-judgments.json)
 
 You can view and query the data using [this Datasette instance](https://law-archive-data.fly.dev/data).
 
