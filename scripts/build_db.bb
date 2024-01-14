@@ -44,6 +44,7 @@
 (def PDPC_UNDERTAKINGS_JSON "data/pdpc-undertakings.json")
 (def PDPC_DECISIONS_JSON "data/pdpc-decisions.json")
 (def LSS_DT_REPORTS_JSON "data/lss-dt-reports.json")
+(def STC_JUDGMENTS_JSON "data/stc-judgments.json")
 
 (defn -main []
   (utils/try-ignore-errors
@@ -60,6 +61,8 @@
                 :id "unique_id"
                 :convert "[{**item, \"unique_id\": item[\"title\"]+\"_\"+item[\"url\"]} for item in json.loads(content)]"
                 :ignore "html")
+   (generate-db "stc_judgments" STC_JUDGMENTS_JSON
+                :id "url")
    (utils/run-sql-file-on-db DB_FILE "scripts/create-views.sql")
    (add-computed-columns DB_FILE)
    (setup-fts "hearings"
