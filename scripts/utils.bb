@@ -19,3 +19,17 @@
           db query)
       :out
       (json/parse-string true)))
+
+(defmacro try-ignore-error [& body]
+  `(try ~@body
+        (catch Exception e
+          (timbre/error e))))
+
+(defmacro try-ignore-errors [& body]
+  `(do
+     ~@(map (fn [e]
+              `(try
+                 ~e
+                 (catch Exception e
+                   (timbre/error e))))
+            body)))

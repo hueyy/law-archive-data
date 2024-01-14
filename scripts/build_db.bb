@@ -28,10 +28,7 @@
             (use-optional-argument convert "--convert")
             (use-optional-argument ignore "--ignore")
             (use-optional-argument id "--id"))
-       (#(try
-           (shell %)
-           (catch Exception e
-             (timbre/error e)))))))
+       (#(utils/try-ignore-error (shell %))))))
 
 (defn setup-fts [table fields]
   (try
@@ -49,29 +46,30 @@
 (def LSS_DT_REPORTS_JSON "data/lss-dt-reports.json")
 
 (defn -main []
-  (generate-db "hearings" HEARINGS_JSON
-               :id "link")
-  (generate-db "sc" SC_JSON
-               :id "name")
-  (generate-db "pdpc_undertakings" PDPC_UNDERTAKINGS_JSON
-               :id "url"
-               :ignore "raw-description")
-  (generate-db "pdpc_decisions" PDPC_DECISIONS_JSON
-               :id "url")
-  (generate-db "lss_dt_reports" LSS_DT_REPORTS_JSON
-               :id "unique_id"
-               :convert "[{**item, \"unique_id\": item[\"title\"]+\"_\"+item[\"url\"]} for item in json.loads(content)]"
-               :ignore "html")
-  (utils/run-sql-file-on-db DB_FILE "scripts/create-views.sql")
-  (add-computed-columns DB_FILE)
-  (setup-fts "hearings"
-             ["title" "parties" "offence-description"])
-  (setup-fts "pdpc_decisions"
-             ["title" "description" "pdf-content"])
-  (setup-fts "pdpc_undertakings"
-             ["organisation" "description" "pdf-content"])
-  (setup-fts "lss_dt_reports"
-             ["title" "content" "pdf-content"]))
+  (utils/try-ignore-errors
+   (generate-db "hearings" HEARINGS_JSON
+                :id "link")
+   (generate-db "sc" SC_JSON
+                :id "name")
+   (generate-db "pdpc_undertakings" PDPC_UNDERTAKINGS_JSON
+                :id "url"
+                :ignore "raw-description")
+   (generate-db "pdpc_decisions" PDPC_DECISIONS_JSON
+                :id "url")
+   (generate-db "lss_dt_reports" LSS_DT_REPORTS_JSON
+                :id "unique_id"
+                :convert "[{**item, \"unique_id\": item[\"title\"]+\"_\"+item[\"url\"]} for item in json.loads(content)]"
+                :ignore "html")
+   (utils/run-sql-file-on-db DB_FILE "scripts/create-views.sql")
+   (add-computed-columns DB_FILE)
+   (setup-fts "hearings"
+              ["title" "parties" "offence-description"])
+   (setup-fts "pdpc_decisions"
+              ["title" "description" "pdf-content"])
+   (setup-fts "pdpc_undertakings"
+              ["organisation" "description" "pdf-content"])
+   (setup-fts "lss_dt_reports"
+              ["title" "content" "pdf-content"])))
 
 (def docker-compose-file "./docker/build_db.docker-compose.yml")
 (defn docker []
