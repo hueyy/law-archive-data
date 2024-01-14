@@ -38,6 +38,6 @@ jobs:
       - name: Generate db
         run: bb --main scripts.build-db
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only --wait-timeout 1200
+      - run: flyctl deploy --remote-only --detach
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
