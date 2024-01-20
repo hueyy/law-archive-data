@@ -29,6 +29,12 @@ jobs:
         uses: turtlequeue/setup-babashka@v1.5.2
         with:
           babashka-version: 1.3.188
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
       - name: Cache db
         id: cache-db
         uses: actions/cache@v3
@@ -37,6 +43,17 @@ jobs:
           key: cache-${{ hashFiles('input/**') }}-${{ hashFiles('scripts/**') }}
       - name: Generate db
         run: bb --main scripts.build-db
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.npm
+            ./app/node_modules
+          key: node-${{ hashFiles('./app/pnpm-lock.yaml') }}
+      - name: Install frontend dependencies
+        run: cd app && pnpm install --config.arch=x64 --config.platform=linux --config.libc=glibc
+      - name: Build frontend
+        run: |
+          cd app && pnpm exec tailwindcss -i ./styles/main.css -o ./dist/main.css --minify
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only --detach
         env:
