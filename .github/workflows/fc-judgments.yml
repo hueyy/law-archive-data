@@ -1,4 +1,4 @@
-name: Obtain latest stc-judgments data
+name: Obtain latest fc-judgments data
 
 on:
   workflow_dispatch:
