@@ -52,7 +52,7 @@
 
 (defn- get-latest-n-decision-pages [n]
   (reduce (fn [acc cur]
-            (Thread/sleep 5000)
+            (utils/wait-for 2000 8000)
             (timbre/info "Fetching PDPC decision page: " cur)
             (concat acc (->> cur
                              (get-decisions-page)

@@ -119,7 +119,7 @@
 
 (defn- get-all-reports []
   (reduce (fn [acc cur]
-            (Thread/sleep 5000)
+            (utils/wait-for 2000 8000)
             (timbre/info "Fetching DT report page: " cur)
             (concat acc (get-report-detail cur)))
           []

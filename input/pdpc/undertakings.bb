@@ -96,7 +96,7 @@
         (timbre/info "Different hash, parse HTML")
         (spit HASH_FILE cur-hash)
         (map #(try
-                (Thread/sleep 5000)
+                (utils/wait-for 2000 8000)
                 (->> % :url
                      (get-undertaking-detail)
                      (merge %))

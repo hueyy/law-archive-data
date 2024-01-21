@@ -103,3 +103,10 @@
           "--user-agent" USER_AGENT
           url)
       :out))
+
+(defn random-number [min max]
+  (let [range (+ max (- min))]
+    (+ min (rand-int range))))
+
+(defn wait-for [min max]
+  (Thread/sleep (random-number min max)))

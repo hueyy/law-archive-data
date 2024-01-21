@@ -45,6 +45,7 @@
 (def PDPC_DECISIONS_JSON "data/pdpc-decisions.json")
 (def LSS_DT_REPORTS_JSON "data/lss-dt-reports.json")
 (def STC_JUDGMENTS_JSON "data/stc-judgments.json")
+(def FC_JUDGMENTS_JSON "data/fc-judgments.json")
 
 (defn -main []
   (utils/try-ignore-errors
@@ -63,6 +64,8 @@
                 :ignore "html")
    (generate-db "stc_judgments" STC_JUDGMENTS_JSON
                 :id "url")
+   (generate-db "fc_judgments" FC_JUDGMENTS_JSON
+                :id "url")
    (utils/run-sql-file-on-db DB_FILE "scripts/create-views.sql")
    (add-computed-columns DB_FILE)
    (setup-fts "hearings"
@@ -72,7 +75,11 @@
    (setup-fts "pdpc_undertakings"
               ["organisation" "description" "pdf-content"])
    (setup-fts "lss_dt_reports"
-              ["title" "content" "pdf-content"])))
+              ["title" "content" "pdf-content"])
+   (setup-fts "stc_judgments"
+              ["title" "citation" "html"])
+   (setup-fts "fc_judgments"
+              ["title" "citation" "html"])))
 
 (def docker-compose-file "./docker/build_db.docker-compose.yml")
 (defn docker []
