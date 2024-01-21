@@ -95,7 +95,11 @@ brew install tesseract ghostscript
 
 #### Local development
 
-After cloning this repository and following [the setup steps above](#setup), you can generate the SQLite database on your machine by running the [`/scripts/build_db.bb` script](./scripts/build_db.bb).
+After cloning this repository and following [the setup steps above](#setup), you can generate the SQLite database on your machine by running the [`/scripts/build_db.bb` script](./scripts/build_db.bb):
+
+```bash
+bb --main scripts.build-db
+```
 
 If you do not have SQLite installed, you will need to install it.
 
@@ -120,7 +124,7 @@ Once you have the SQLite data, you can analyse it by running [Datasette](https:/
 
 ```bash
 cd lacunadb
-bb /scripts/dev_docker.bb
+bb ./scripts/dev_docker.bb
 ```
 
 It may be helpful to refer to the Docker images or the GitHub actions for a better idea of how the project functions and how to run certain scripts.

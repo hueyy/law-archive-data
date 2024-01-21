@@ -56,6 +56,14 @@ databases:
         hidden: true
       sc_version:
         hidden: true
+      stc_judgments:
+        source: https://www.lawnet.sg/lawnet/web/lawnet/free-resources
+        source_url: https://www.lawnet.sg/lawnet/web/lawnet/free-resources?p_p_id=freeresources_WAR_lawnet3baseportlet&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_pos=2&p_p_col_count=3&_freeresources_WAR_lawnet3baseportlet_action=subordinate
+        sort_desc: date
+      stc_judgments_changed:
+        hidden: true
+      stc_judgments_version:
+        hidden: true
     queries:
 plugins:
   datasette-dashboards:
@@ -242,8 +250,6 @@ plugins:
               timestamp ASC
           library: vega-lite
           display:
-            autosize:
-              resize: true
             height: container
             mark: { type: line, point: true, tooltip: true }
             encoding:
@@ -727,3 +733,78 @@ plugins:
               href: 
                 field: url
                 type: nominal
+    stc_judgments:
+      title: State Court Judgments
+      settings:
+        allow_fullscreen: true
+      filters:
+        date_start:
+          name: Date Start
+          type: date
+          default: "1900-01-01"
+        date_end:
+          name: Date End
+          type: date
+      charts:
+        stc-count:
+          title: Total number of judgments
+          db: data
+          query: >-
+            SELECT
+              count(*) AS count,
+              DATE(`date`) as d
+            FROM stc_judgments
+            WHERE TRUE
+              [[ AND d >= date(:date_start) ]]
+              [[ AND d <= date(:date_end) ]]
+          library: metric
+          display:
+            field: count
+            prefix:
+            suffix:
+        judgments-by-coram:
+          title: Number of judgments by coram
+          db: data
+          query: >-
+            SELECT
+              DATE(`date`) as d,
+              COUNT(*) AS count,
+              coram
+            FROM
+              stc_judgments
+            WHERE TRUE
+              [[ AND d >= date(:date_start) ]]
+              [[ AND d <= date(:date_end) ]]
+            GROUP BY
+              coram
+            ORDER BY count DESC
+          library: vega-lite
+          display:
+            mark: { type: bar, tooltip: true }
+            encoding:
+              x: { field: coram, type: nominal }
+              y: { field: count, type: quantitative }
+              color: { field: coram, type: nominal }
+        latest-judgments:
+          title: Latest judgments
+          db: data
+          query: >- 
+            SELECT
+              title,
+              date
+            FROM
+              (
+                SELECT
+                  '<a href="' || url || '">' || title || ' ' || citation || '</a>' AS title,
+                  date
+                FROM
+                  stc_judgments
+              )
+            WHERE TRUE
+              [[ AND date >= date(:date_start) ]]
+              [[ AND date <= date(:date_end) ]]
+            ORDER BY
+              date DESC
+            LIMIT
+              10
+          library: table
