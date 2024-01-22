@@ -1,5 +1,6 @@
 (ns input.judgments.stc-judgments
   (:require   [cheshire.core :as json]
+              [input.utils.general :as utils]
               [input.judgments.utils :refer [get-feed populate-case-data]]))
 
 (def DOMAIN "https://www.lawnet.sg")
