@@ -46,6 +46,7 @@
 (def LSS_DT_REPORTS_JSON "data/lss-dt-reports.json")
 (def STC_JUDGMENTS_JSON "data/stc-judgments.json")
 (def FC_JUDGMENTS_JSON "data/fc-judgments.json")
+(def SAL_SPECIALISTS_JSON "data/sal-specialists.json")
 
 (defn -main []
   (utils/try-ignore-errors
@@ -66,6 +67,8 @@
                 :id "url")
    (generate-db "fc_judgments" FC_JUDGMENTS_JSON
                 :id "url")
+   (generate-db "sal_specialists" SAL_SPECIALISTS_JSON
+                :id "name")
    (utils/run-sql-file-on-db DB_FILE "scripts/create-views.sql")
    (add-computed-columns DB_FILE)
    (setup-fts "hearings"
@@ -79,7 +82,9 @@
    (setup-fts "stc_judgments"
               ["title" "citation" "html"])
    (setup-fts "fc_judgments"
-              ["title" "citation" "html"])))
+              ["title" "citation" "html"])
+   (setup-fts "sal_specialists"
+              ["title" "organisation"])))
 
 (def docker-compose-file "./docker/build_db.docker-compose.yml")
 (defn docker []

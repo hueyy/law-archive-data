@@ -57,7 +57,7 @@ databases:
       sc_version:
         hidden: true
       stc_judgments:
-        source: https://www.lawnet.sg/lawnet/web/lawnet/free-resources
+        source: lawnet.sg/lawnet/web/lawnet/free-resources
         source_url: https://www.lawnet.sg/lawnet/web/lawnet/free-resources?p_p_id=freeresources_WAR_lawnet3baseportlet&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_pos=2&p_p_col_count=3&_freeresources_WAR_lawnet3baseportlet_action=subordinate
         sort_desc: date
       stc_judgments_changed:
@@ -65,12 +65,19 @@ databases:
       stc_judgments_version:
         hidden: true
       fc_judgments:
-        source: https://www.lawnet.sg/lawnet/web/lawnet/free-resources
+        source: lawnet.sg/lawnet/web/lawnet/free-resources
         source_url: https://www.lawnet.sg/lawnet/web/lawnet/free-resources?p_p_id=freeresources_WAR_lawnet3baseportlet&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_pos=2&p_p_col_count=3&_freeresources_WAR_lawnet3baseportlet_action=juvenile
         sort_desc: date
       fc_judgments_changed:
         hidden: true
       fc_judgments_version:
+        hidden: true
+      sal_specialists:
+        source: sal.org.sg/Services/Appointments/Specialist-Accreditation/Find-a-Specialist
+        source_url: https://www.sal.org.sg/Services/Appointments/Specialist-Accreditation/Find-a-Specialist
+      sal_specialists_changed:
+        hidden: true
+      sal_specialists_version:
         hidden: true
     queries:
 plugins:
