@@ -10,11 +10,11 @@ This repository contains Singapore legal data obtained various public sources an
 - State Court judgments [`/data/stc-judgments.json`](./data/stc-judgments.json)
 - Family Court and Juvenile Court judgments [`/data/fc-judgments.json`](./data/fc-judgments.json)
 
-You can view and query the data using [this Datasette instance](https://law-archive-data.fly.dev/data).
+You can view and query the data using [this Datasette instance](https://lacunadb.huey.xyz/data).
 
 The code and configuration files in this repository are licensed under the EUPL-1.2 as set out in the [LICENCE](./LICENCE) file.
 
-The data remains owned by its respective owners. This repository is not affiliated with the Singapore Academy of Law, Singapore Courts, Law Society, or any government agency, and is provided for convenience only.
+This repository is not affiliated with the Singapore Academy of Law, Singapore Courts, Law Society, or any government agency, and is provided for convenience only.
 
 ## Architecture
 
@@ -117,7 +117,7 @@ brew install sqlite3
 ```
 
 
-This may take some time (possibly >1h) as there have been many commits to this repository. The `build_db.bb` script also does some processing on the data, e.g. it creates and populates certain columns for ease of use based on the raw data (see e.g. [`/scripts/computed_columns.bb`](./scripts/computed_columns.bb)). Alternatively, you can download a copy of the database from [law-archive-data.fly.dev](https://law-archive-data.fly.dev).
+This may take some time (possibly >1h) as there have been many commits to this repository. The `build_db.bb` script also does some processing on the data, e.g. it creates and populates certain columns for ease of use based on the raw data (see e.g. [`/scripts/computed_columns.bb`](./scripts/computed_columns.bb)). Alternatively, you can download a copy of the database from [lacunadb.huey.xyz](https://lacunadb.huey.xyz/).
 
 ### Backend
 
