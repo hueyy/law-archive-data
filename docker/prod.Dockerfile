@@ -4,7 +4,8 @@ RUN datasette install \
   datasette-vega \
   datasette-pretty-json \
   datasette-dashboards \
-  datasette-sqlite-regex
+  datasette-sqlite-regex \
+  datasette-atom
 
 COPY ./data/data.db /data/data.db
 COPY ./data/metadata.yml /data/metadata.yml
@@ -22,4 +23,5 @@ ENTRYPOINT [ \
   "--metadata", "/data/metadata.yml", \
   "--template-dir", "/app/html-templates", \
   "--static", "assets:/app/dist", \
-  "--setting", "force_https_urls", "1"]
+  "--setting", "force_https_urls", "1", \
+  "--setting", "sql_time_limit_ms", "5000"]

@@ -80,6 +80,32 @@ databases:
       sal_specialists_version:
         hidden: true
     queries:
+      # ip_cybersecurity:
+      #   title: IP & Cybersecurity Hearings
+      #   sql: |
+      #     select
+      #       _id,
+      #       _item_id AS atom_id,
+      #       title AS atom_title,
+      #       link AS atom_link,
+      #       timestamp || "+08:00" AS atom_updated,
+      #       (
+      #         "<p>" || [offence-description] || "</p>" || "<p>" || [hearing-type] || "</p>" || "<p>" || venue || "</p>" || "<p>" || parties || "</p>"
+      #       ) AS atom_content_html
+      #     from
+      #       hearings
+      #     where
+      #       (
+      #         "offence-description" like "%copyright%"
+      #         OR "offence-description" like "%trade mark%"
+      #         OR "offence-description" like "%patent%"
+      #         OR "offence-description" like "%design%"
+      #         OR "offence-description" like "%cybersecurity%"
+      #       )
+      #     order by
+      #       timestamp desc
+      #     limit
+      #       101
 plugins:
   datasette-dashboards:
     senior_counsel:
