@@ -18,10 +18,15 @@
       :body
       (utils/parse-html)))
 
+(defn- parse-name [el]
+  (let [raw-name (utils/get-el-content el)
+        regex-result (re-find #"(?i)(.+) \([0-9\.]{1,6}(MB|KB)\)$" raw-name)]
+    (if (nil? regex-result)
+      raw-name
+      (get regex-result 1))))
+
 (defn- parse-item [anchor]
-  {:name (get (->> anchor
-                   (utils/get-el-content)
-                   (re-find #"(?i)(.+) \([0-9\.]{1,6}(MB|KB)\)$")) 1)
+  {:name (parse-name anchor)
    :licence-pdf (->> anchor
                      :attrs :href
                      (str "https://www.imda.gov.sg/regulations-and-licences/licensing/list-of-telecommunication-and-postal-service-licensees/"))})
