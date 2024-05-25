@@ -47,6 +47,7 @@
 (def STC_JUDGMENTS_JSON "data/stc-judgments.json")
 (def FC_JUDGMENTS_JSON "data/fc-judgments.json")
 (def SAL_SPECIALISTS_JSON "data/sal-specialists.json")
+(def TELCO_FBO "data/telco-fbo.json")
 
 (defn -main []
   (utils/try-ignore-errors
@@ -69,10 +70,14 @@
                 :id "url")
    (generate-db "sal_specialists" SAL_SPECIALISTS_JSON
                 :id "name")
+   (generate-db "telco_fbo" SAL_SPECIALISTS_JSON
+                :id "name")
    (utils/run-sql-file-on-db DB_FILE "scripts/create-views.sql")
    (add-computed-columns DB_FILE)
    (setup-fts "hearings"
               ["title" "parties" "offence-description"])
+   (setup-fts "sc"
+              ["name" "organisation"])
    (setup-fts "pdpc_decisions"
               ["title" "description" "pdf-content"])
    (setup-fts "pdpc_undertakings"
@@ -84,7 +89,9 @@
    (setup-fts "fc_judgments"
               ["title" "citation" "html"])
    (setup-fts "sal_specialists"
-              ["title" "organisation"])))
+              ["name" "organisation"])
+   (setup-fts "telco_fbo"
+              ["name"])))
 
 (def docker-compose-file "./docker/build_db.docker-compose.yml")
 (defn docker []
