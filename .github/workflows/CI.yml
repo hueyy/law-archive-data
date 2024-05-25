@@ -17,9 +17,9 @@ jobs:
           lfs: true
           fetch-depth: 0
       - name: Setup Babashka
-        uses: turtlequeue/setup-babashka@v1.5.2
+        uses: turtlequeue/setup-babashka@v1.70
         with:
-          babashka-version: 1.3.188
+          babashka-version: 1.3.190
       - name: clj-kondo
         uses: DeLaGuardo/setup-clojure@12.1
         with:
