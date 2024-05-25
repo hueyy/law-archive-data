@@ -70,7 +70,7 @@
                 :id "url")
    (generate-db "sal_specialists" SAL_SPECIALISTS_JSON
                 :id "name")
-   (generate-db "telco_fbo" SAL_SPECIALISTS_JSON
+   (generate-db "telco_fbo" TELCO_FBO
                 :id "name")
    (utils/run-sql-file-on-db DB_FILE "scripts/create-views.sql")
    (add-computed-columns DB_FILE)

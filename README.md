@@ -14,7 +14,7 @@ You can view and query the data using [this Datasette instance](https://lacunadb
 
 The code and configuration files in this repository are licensed under the EUPL-1.2 as set out in the [LICENCE](./LICENCE) file.
 
-This repository is not affiliated with the Singapore Academy of Law, Singapore Courts, Law Society, or any government agency, and is provided for convenience only.
+This repository is not affiliated with the Singapore Academy of Law, Singapore Courts, Law Society, or any other organisation, and is provided for educational purposes only.
 
 ## Architecture
 

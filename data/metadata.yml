@@ -79,6 +79,13 @@ databases:
         hidden: true
       sal_specialists_version:
         hidden: true
+      telco_fbo:
+        source: imda.gov.sg/regulations-and-licences/licensing/list-of-telecommunication-and-postal-service-licensees/list-of-facilities-based-operators
+        source_url: https://www.imda.gov.sg/regulations-and-licences/licensing/list-of-telecommunication-and-postal-service-licensees/list-of-facilities-based-operators
+      telco_fbo_changed:
+        hidden: true
+      telco_fbo_version:
+        hidden: true
     queries:
       # ip_cybersecurity:
       #   title: IP & Cybersecurity Hearings
