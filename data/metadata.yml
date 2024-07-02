@@ -871,3 +871,25 @@ plugins:
             LIMIT
               10
           library: table
+    telco_fbo:
+      title: FBO licences
+      settings:
+        allow_fullscreen: true
+      charts:
+        latest_fbo_licences:
+          title: Latest FBO licences granted
+          db: data
+          query: >-
+            SELECT
+              name
+            FROM
+              (
+                SELECT
+                  _id,
+                  '<a href="' || `licence-pdf` || '">' || name || '</a>' AS name
+                FROM telco_fbo
+                ORDER BY
+                  _id DESC
+                LIMIT 10
+              )
+          library: table

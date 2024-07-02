@@ -4,7 +4,8 @@
   (:require [babashka.curl :as curl]
             [babashka.pods :as pods]
             [input.utils.general :as utils]
-            [cheshire.core :as json]))
+            [cheshire.core :as json]
+            [input.utils.pdf :as pdf]))
 
 (pods/load-pod 'retrogradeorbit/bootleg "0.1.9")
 
@@ -26,10 +27,15 @@
       (get regex-result 1))))
 
 (defn- parse-item [anchor]
-  {:name (parse-name anchor)
-   :licence-pdf (->> anchor
-                     :attrs :href
-                     (str "https://www.imda.gov.sg/regulations-and-licences/licensing/list-of-telecommunication-and-postal-service-licensees/"))})
+  (let [pdf-link (->> anchor
+                      :attrs :href
+                      (str "https://www.imda.gov.sg/regulations-and-licences/licensing/list-of-telecommunication-and-postal-service-licensees/"))]
+    {:name (parse-name anchor)
+     :licence-pdf
+     :licence-text (pdf/get-content-from-url
+                    pdf-link
+                    :ocr? true
+                    :ocr-options {:skip-strategy :skip-text})}))
 
 (defn- parse-page [h-map]
   (->> h-map
