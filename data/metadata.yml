@@ -137,7 +137,7 @@ plugins:
           db: data
           query: >-
             SELECT
-              count(*) AS count, 
+              count(DISTINCT _id) AS count, 
               DATE(`appointment-date`) AS appt_date
             FROM sc
             WHERE TRUE
@@ -169,7 +169,7 @@ plugins:
           query: >-
             SELECT
               date(`appointment-date`) as appt_date,
-              SUM(COUNT(*)) OVER (ORDER BY `appointment-date`) AS count
+              SUM(COUNT(DISTINCT _id)) OVER (ORDER BY `appointment-date`) AS count
             FROM sc
             WHERE TRUE
               [[ AND appt_date >= date(:date_start) ]]
@@ -187,7 +187,7 @@ plugins:
           db: data
           query: >-
             SELECT
-              count(*) AS count,
+              count(DISTINCT _id) AS count,
               organisation,
               date(`appointment-date`) as appt_date
             FROM sc
@@ -208,7 +208,7 @@ plugins:
           db: data
           query: >-
             SELECT
-              count(*) AS count,
+              count(DISTINCT _id) AS count,
               (CASE WHEN deceased = 0 THEN 'Alive' ELSE 'Deceased' END) AS status,
               date(`appointment-date`) as appt_date
             FROM sc
@@ -227,7 +227,7 @@ plugins:
           db: data
           query: >-
             SELECT
-              count(*) AS count,
+              count(DISTINCT _id) AS count,
               title,
               date(`appointment-date`) as appt_date
             FROM sc
@@ -267,7 +267,7 @@ plugins:
           query: >-
             SELECT
               timestamp,
-              SUM(COUNT(*)) OVER (
+              SUM(COUNT(DISTINCT _id)) OVER (
                 ORDER BY
                   timestamp ASC
               ) AS count,
@@ -282,7 +282,7 @@ plugins:
             UNION
             SELECT
               timestamp,
-              SUM(COUNT(*)) OVER (
+              SUM(COUNT(DISTINCT _id)) OVER (
                 ORDER BY
                   timestamp ASC
               ) AS count,
@@ -310,11 +310,12 @@ plugins:
           query: >-
             SELECT
               obligation,
-              COUNT(*) AS count,
+              COUNT(DISTINCT _id) AS count,
               timestamp
             FROM
               (
                 SELECT
+                  _id,
                   "Protection" as obligation,
                   title,
                   timestamp
@@ -324,6 +325,7 @@ plugins:
                   title LIKE "%Protection%"
                 UNION
                 SELECT
+                  _id,
                   "Accountability" as obligation,
                   title,
                   timestamp
@@ -334,6 +336,7 @@ plugins:
                   OR title LIKE "%Openness%"
                 UNION
                 SELECT
+                  _id,
                   "Consent" as obligation,
                   title,
                   timestamp
@@ -343,6 +346,7 @@ plugins:
                   title LIKE "%Consent%"
                 UNION
                 SELECT
+                  _id,
                   "Notification" as obligation,
                   title,
                   timestamp
@@ -352,6 +356,7 @@ plugins:
                   title LIKE "%Notification%"
                 UNION
                 SELECT
+                  _id,
                   "Purpose Limitation" as obligation,
                   title,
                   timestamp
@@ -361,6 +366,7 @@ plugins:
                   title LIKE "%Purpose Limitation%"
                 UNION
                 SELECT
+                  _id,
                   "Acccuracy" as obligation,
                   title,
                   timestamp
@@ -370,6 +376,7 @@ plugins:
                   title LIKE "%Accuracy%"
                 UNION
                 SELECT
+                  _id,
                   "Access and Correction" as obligation,
                   title,
                   timestamp
@@ -388,6 +395,7 @@ plugins:
                   )
                 UNION
                 SELECT
+                  _id,
                   "Data Breach Notification" as obligation,
                   title,
                   timestamp
@@ -397,6 +405,7 @@ plugins:
                   title LIKE "%Data Breach Notification%"
                 UNION
                 SELECT
+                  _id,
                   "Retention Limitation" as obligation,
                   title,
                   timestamp
@@ -406,6 +415,7 @@ plugins:
                   title LIKE "%Retention Limitation%"
                 UNION
                 SELECT
+                  _id,
                   "Transfer Limitation" as obligation,
                   title,
                   timestamp
@@ -440,11 +450,12 @@ plugins:
           query: >-
             SELECT
               action,
-              COUNT(*) AS count,
-              action || " (" || COUNT(*) || ")" AS label
+              COUNT(DISTINCT _id) AS count,
+              action || " (" || COUNT(DISTINCT _id) || ")" AS label
             FROM
               (
                 SELECT
+                  _id,
                   "Financial Penalty" as action,
                   timestamp
                 FROM
@@ -453,6 +464,7 @@ plugins:
                   json_extract(financial_penalties, '$.max') > 0
                 UNION
                 SELECT
+                  _id,
                   "Directions" as action,
                   timestamp
                 FROM
@@ -468,6 +480,7 @@ plugins:
                   )
                 UNION
                 SELECT
+                  _id,
                   "Warning" as action,
                   timestamp
                 FROM
@@ -484,6 +497,7 @@ plugins:
                   )
                 UNION
                 SELECT
+                  _id,
                   "No action" as action,
                   timestamp
                 FROM
@@ -501,6 +515,7 @@ plugins:
                   )
                 UNION
                 SELECT
+                  _id,
                   "Undertaking" as action,
                   timestamp
                 FROM
@@ -758,7 +773,7 @@ plugins:
           query: >-
             SELECT
               timestamp,
-              SUM(COUNT(*)) OVER (
+              SUM(COUNT(DISTINCT _id)) OVER (
                 ORDER BY
                   timestamp ASC
               ) AS count,
@@ -799,7 +814,7 @@ plugins:
           db: data
           query: >-
             SELECT
-              count(*) AS count,
+              count(DISTINCT _id) AS count,
               DATE(`date`) as d
             FROM stc_judgments
             WHERE TRUE
@@ -816,7 +831,7 @@ plugins:
           query: >-
             SELECT
               DATE(`date`) as d,
-              COUNT(*) AS count,
+              COUNT(DISTINCT _id) AS count,
               coram
             FROM
               stc_judgments
