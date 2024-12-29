@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: ./dev.Dockerfile
     container_name: lacuna-db-dev-app
-    restart: always
+    restart: unless-stopped
     ports:
       - 8001:8001
     volumes:

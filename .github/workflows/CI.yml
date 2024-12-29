@@ -12,19 +12,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.6
+      - uses: actions/checkout@v4.2.2
         with:
           lfs: true
           fetch-depth: 0
-      - name: Setup Babashka
-        uses: turtlequeue/setup-babashka@v1.6.0
+      - uses: cachix/install-nix-action@v30
+      - uses: cachix/cachix-action@v15
         with:
-          babashka-version: 1.3.190
-      - name: clj-kondo
-        uses: DeLaGuardo/setup-clojure@12.5
-        with:
-          clj-kondo: 2023.10.20
-      - name: Lint code
-        run: clj-kondo --lint input scripts test
+          name: devenv
+      - name: Install devenv.sh
+        run: nix profile install nixpkgs#devenv
       - name: Run tests
-        run: bb --main test.input.utils.date-test
+        run: devenv test

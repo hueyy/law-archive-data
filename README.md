@@ -9,6 +9,7 @@ This repository contains Singapore legal data obtained various public sources an
 - LSS DT reports: [`/data/lss-dt-reports.json`](./data/lss-dt-reports.json)
 - State Court judgments [`/data/stc-judgments.json`](./data/stc-judgments.json)
 - Family Court and Juvenile Court judgments [`/data/fc-judgments.json`](./data/fc-judgments.json)
+- Telecommunications FBO licences [`/data/telco-fbo.json`](./data/telco-fbo.json)
 
 You can view and query the data using [this Datasette instance](https://lacunadb.huey.xyz/data).
 
@@ -17,6 +18,8 @@ The code and configuration files in this repository are licensed under the EUPL-
 This repository is not affiliated with the Singapore Academy of Law, Singapore Courts, Law Society, or any other organisation, and is provided for educational purposes only.
 
 ## Architecture
+
+This is a big picture overview of the general architecture of this project:
 
 ```mermaid
 flowchart LR
@@ -39,10 +42,6 @@ flowchart LR
   frontend-- served by -->backend
 ```
 
-### Frontend
-
-See [`/app/README.md`](./app/README.md) for frontend development.
-
 ### Data pipeline
 
 In the data pipeline, everything is just a script (aka a microservice™). Although most of the scripts are [Babashka](https://github.com/babashka/babashka) scripts written in [Clojure](https://clojure.org/), new scripts can be in any language. 
@@ -53,7 +52,40 @@ The [`/.github/workflows/deploy.yml`](./.github/workflows/deploy.yml) runs the [
 
 Some of the scripts in the `/scripts` folder run Python tools. This project uses [Poetry](https://github.com/babashka/babashka) to manage its [Python](https://www.python.org/) dependencies, so do install Poetry and the dependencies before running those scripts. 
 
-#### Setup
+### Frontend
+
+See [`/app/README.md`](./app/README.md) for frontend development.
+
+## Development
+
+### Setup via devenv (recommended)
+
+This project uses [devenv](https://devenv.sh/) to quickly and conveniently set up a reproducible development environment. `devenv` is particularly useful here because this project contains code written in various languages and has a variety of dependencies to be installed.
+
+After [installing `devenv`](https://devenv.sh/getting-started/), enter into a shell. This should automatically set up the environment and install all the dependencies:
+
+```shell
+devenv shell
+```
+
+The JSON data files across the various commits to the `git` repository should then be aggregated into a SQLite database for ease of analysis. To create and populate the SQLite database:
+
+```shell
+devenv shell build-db
+```
+
+This may take some time (possibly >1h) as there have been many commits to this repository. The `build_db.bb` script also does some processing on the data, e.g. it creates and populates certain columns for ease of use based on the raw data (see e.g. [`/scripts/computed_columns.bb`](./scripts/computed_columns.bb)). Alternatively, you can download a copy of the database from [lacunadb.huey.xyz](https://lacunadb.huey.xyz/).
+
+You can run the same command above to update the SQLite database as necessary (e.g. after pulling subsequent commits). 
+
+Once you have the SQLite data, you can analyse it by running [Datasette](https://datasette.io/) locally:
+
+```shell
+devenv shell dev-datasette
+```
+
+
+### Manual setup
 
 Make sure you have [Babashka]((https://github.com/babashka/babashka)), [Python](https://www.python.org/), and [Poetry](https://github.com/babashka/babashka) installed.
 
@@ -61,13 +93,13 @@ Install the Poetry dependencies by running `poetry install --no-root`.
 
 This project uses various CLI utilities, which you will need to install to run the input scripts:
 
-##### pdftotext
+#### pdftotext
 
 [`pdftotext`](https://manpages.ubuntu.com/manpages/lunar/en/man1/pdftotext.1.html) is used to extract text from PDFs. It is bundled within [`poppler`](https://en.wikipedia.org/wiki/Poppler_(software)).
 
 On Ubuntu/Debian:
 
-```bash
+```shell
 sudo apt install poppler-utils
 ```
 
@@ -77,13 +109,13 @@ On macOS, you can install it using [Homebrew](https://formulae.brew.sh/formula/p
 brew install poppler
 ```
 
-##### ocrmypdf
+#### ocrmypdf
 
 [`ocrmypdf`](https://ocrmypdf.readthedocs.io/en/latest/) is used to run OCR on PDFs. It is a Poetry dependency already, but it does require [`tesseract`](https://github.com/tesseract-ocr/tesseract) and [`ghostscript`](https://www.ghostscript.com/) to be installed.
 
 On Ubuntu/Debian:
 
-```bash
+```shell
 sudo apt install tesseract-ocr ghostscript
 ```
 
@@ -93,12 +125,11 @@ On macOS:
 brew install tesseract ghostscript
 ```
 
-
-#### Local development
+#### Building the sqlite database
 
 After cloning this repository and following [the setup steps above](#setup), you can generate the SQLite database on your machine by running the [`/scripts/build_db.bb` script](./scripts/build_db.bb):
 
-```bash
+```shell
 bb --main scripts.build-db
 ```
 
@@ -106,7 +137,7 @@ If you do not have SQLite installed, you will need to install it.
 
 On Ubuntu/Debian:
 
-```bash
+```shell
 sudo apt install sqlite3
 ```
 
@@ -116,16 +147,12 @@ On macOS:
 brew install sqlite3
 ```
 
+#### Running Datasette
 
-This may take some time (possibly >1h) as there have been many commits to this repository. The `build_db.bb` script also does some processing on the data, e.g. it creates and populates certain columns for ease of use based on the raw data (see e.g. [`/scripts/computed_columns.bb`](./scripts/computed_columns.bb)). Alternatively, you can download a copy of the database from [lacunadb.huey.xyz](https://lacunadb.huey.xyz/).
+You can use the [`/scripts/dev_docker.bb` script](./scripts/dev_docker.bb). 
 
-### Backend
-
-Once you have the SQLite data, you can analyse it by running [Datasette](https://datasette.io/) locally. You can use the [`/scripts/dev_docker.bb` script](./scripts/dev_docker.bb). 
-
-```bash
-cd lacunadb
+```shell
 bb ./scripts/dev_docker.bb
 ```
 
-It may be helpful to refer to the Docker images or the GitHub actions for a better idea of how the project functions and how to run certain scripts.
+It may be helpful to refer to the Docker images or the `devenv.nix` configuration file for a better idea of how the project functions and how to run certain scripts.

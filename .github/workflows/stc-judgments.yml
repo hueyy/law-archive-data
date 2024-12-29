@@ -10,22 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out this repo
-      uses: actions/checkout@v4.1.6
+      uses: actions/checkout@v4.2.2
       with:
         fetch-depth: 0
         token: ${{ secrets.PAT }}
-    - name: Setup Babashka
-      uses: turtlequeue/setup-babashka@v1.6.0
+    - uses: cachix/install-nix-action@v30
+    - uses: cachix/cachix-action@v15
       with:
-        babashka-version: 1.3.190
+        name: devenv
+    - name: Install devenv.sh
+      run: nix profile install nixpkgs#devenv
     - name: Fetch latest data
-      run: bb --main input.judgments.stc-judgments
+      run: devenv shell fetch-stc-judgments
     - name: Commit and push if it changed
-      run: |-
-        git config user.name "Automated update"
-        git config user.email "actions@users.noreply.github.com"
-        git add -A
-        timestamp=$(TZ='Asia/Singapore' date)
-        git commit -m "Latest stc-judgments data: ${timestamp}" || exit 0
-        git pull --rebase
-        git push
+      run: devenv shell automated-git-push stc-judgments

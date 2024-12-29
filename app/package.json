@@ -1,14 +1,14 @@
 {
-  "name": "lacuna-db-app",
-  "version": "1.0.0",
-  "description": "The frontend consists of HTML templates served by Datasette.",
-  "main": "N/A",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Huey <hello@huey.xyz>",
-  "license": "EUPL-1.2",
-  "devDependencies": {
-    "tailwindcss": "^3.3.5"
-  }
+	"name": "lacuna-db-app",
+	"version": "1.0.0",
+	"description": "The frontend consists of HTML templates served by Datasette.",
+	"main": "N/A",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Huey <hello@huey.xyz>",
+	"license": "EUPL-1.2",
+	"devDependencies": {
+		"tailwindcss": "^3.3.5"
+	}
 }
