@@ -39,7 +39,7 @@
   scripts.dev-datasette.exec = ''bb ./scripts/dev_docker.bb'';
 
   scripts.fetch-fc-judgments.exec = ''bb --main input.judgments.fc-judgments'';
-  scripts.fetch-hearings.exec = ''bb --main input.hearings.get_hearings'';
+  scripts.fetch-hearings.exec = ''bb --main input.hearings.get-hearings'';
   scripts.fetch-lss-dt-reports.exec = ''bb --main input.lss.dt-reports'';
   scripts.fetch-pdpc-decisions.exec = ''bb --main input.pdpc.decisions'';
   scripts.fetch-pdpc-undertakings.exec = ''bb --main input.pdpc.undertakings'';

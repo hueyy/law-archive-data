@@ -1,12 +1,11 @@
 #!/usr/bin/env bb
 
-(ns input.hearings.get_hearings
+(ns input.hearings.get-hearings
   (:require [clojure.math :as math]
-            [babashka.curl :as curl]
             [babashka.pods :as pods]
             [cheshire.core :as json]
             [input.utils.general :as utils]
-            [input.hearings.populate_hearing_data :refer [populate-hearing-data]])
+            [input.hearings.populate-hearing-data :refer [populate-hearing-data]])
   (:import [java.time LocalDateTime]
            [java.time.format DateTimeFormatter])
   (:gen-class))
@@ -36,11 +35,7 @@
 
 (defn- get-hearing-list-page-raw
   [page]
-  (-> (curl/post URL (-> page
-                         (make-request-body)
-                         (utils/make-json-response-body)))
-      :body
-      (json/parse-string true)
+  (-> (utils/curli-post-json URL (make-request-body page))
       :listPartialView
       (utils/parse-html)))
 

@@ -1,8 +1,7 @@
 #!/usr/bin/env bb
 
-(ns input.hearings.populate_hearing_data
-  (:require [babashka.curl :as curl]
-            [babashka.pods :as pods]
+(ns input.hearings.populate-hearing-data
+  (:require [babashka.pods :as pods]
             [input.utils.general :as utils]))
 
 (pods/load-pod 'retrogradeorbit/bootleg "0.1.9")
@@ -10,7 +9,7 @@
 (require '[pod.retrogradeorbit.bootleg.utils :as bootleg]
          '[pod.retrogradeorbit.hickory.select :as s])
 
-(defn get-hearing-detail-raw [url] (-> (curl/get url) :body))
+(defn get-hearing-detail-raw [url] (utils/curli url))
 
 (defn get-field-value [parent-el field-regex]
   (let [field-value (s/select (s/child

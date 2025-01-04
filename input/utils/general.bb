@@ -89,20 +89,32 @@
                         filename
                         downloaded-filename))))
 
+(def CURL_IMPERSONATE_BINARY "./curl-impersonate-chrome")
 (defn download-curl-impersonator []
-  (download-binary "https://github.com/lwthiker/curl-impersonate/releases/download/v0.5.4/curl-impersonate-v0.5.4.x86_64-linux-gnu.tar.gz"
+  (download-binary "https://github.com/lexiforest/curl-impersonate/releases/download/v0.8.2/curl-impersonate-v0.8.2.x86_64-linux-gnu.tar.gz"
                    :untar? true
-                   :filename "curl-impersonate-ff"))
+                   :filename CURL_IMPERSONATE_BINARY))
 
-(def CURL_IMPERSONATE_BINARY "./curl-impersonate-ff")
-(def USER_AGENT "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36")
-(defn curli [url]
+(def USER_AGENT "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.3")
+(defn curli [url & {:keys [raw-args
+                           user-agent]
+                    :or {raw-args []
+                         user-agent USER_AGENT}}]
   (when (-> CURL_IMPERSONATE_BINARY (fs/exists?) (not))
     (download-curl-impersonator))
-  (-> (sh CURL_IMPERSONATE_BINARY
-          "--user-agent" USER_AGENT
-          url)
-      :out))
+  (let [command (concat [CURL_IMPERSONATE_BINARY
+                         "--user-agent" user-agent]
+                        raw-args
+                        [url])]
+    (-> (sh command)
+        :out)))
+(defn curli-post-json [url body]
+  (-> url
+      (curli :raw-args ["--data" (json/generate-string body)
+                        "--request" "POST"
+                        "--header" "Content-Type: application/json"])
+      (json/parse-string
+       true)))
 
 (defn random-number [min max]
   (let [range (+ max (- min))]
