@@ -5,7 +5,8 @@ RUN datasette install \
   datasette-pretty-json \
   datasette-dashboards \
   datasette-sqlite-regex \
-  datasette-atom
+  datasette-atom \
+  datasette-block-robots
 
 WORKDIR /app
 

@@ -114,6 +114,8 @@ databases:
       #     limit
       #       101
 plugins:
+  datasette-block-robots:
+    allow_only_index: true
   datasette-dashboards:
     senior_counsel:
       title: Senior Counsel Statistics
